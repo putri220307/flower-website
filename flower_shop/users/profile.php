@@ -256,7 +256,7 @@ if (!isset($_SESSION['created_at']) && isset($user['created_at'])) {
                     </div>
 
                     <div class="form-actions">
-                        <a href="javascript:history.back()" class="btn btn-secondary">
+                    <a href="../index.php" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back
                         </a>
                         <a href="../auth/logout.php" class="btn btn-danger">

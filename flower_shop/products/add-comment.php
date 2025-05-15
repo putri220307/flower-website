@@ -1,83 +1,83 @@
-<?php
-session_start();
+    <?php
+    session_start();
 
-// Debugging - Aktifkan error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+    // Debugging - Aktifkan error reporting
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
 
-// Pengecekan session lebih ketat
-if (!isset($_SESSION['loggedin'], $_SESSION['user_id'], $_SESSION['username'])) {
-    // Redirect path yang benar ke login
-    header("Location: ../auth/login.php?product_id=" . ($_GET['id'] ?? ''));
-    exit;
-}
-
-// Path include yang benar dari folder products
-require '../config/database.php';
-include '../includes/header.php';
-
-// Validasi product_id
-$product_id = filter_var($_GET['id'] ?? 0, FILTER_VALIDATE_INT, [
-    'options' => ['min_range' => 1]
-]);
-
-if (!$product_id) {
-    die("Invalid product ID");
-}
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $comment = trim($_POST['comment'] ?? '');
-    
-    if (!empty($comment)) {
-        try {
-            $stmt = $pdo->prepare("INSERT INTO comments (product_id, user_id, comment) VALUES (?, ?, ?)");
-            $stmt->execute([$product_id, $_SESSION['user_id'], htmlspecialchars($comment)]);
-            
-            header("Location: comments.php?id=$product_id");
-            exit;
-        } catch (PDOException $e) {
-            die("Error saving comment: " . $e->getMessage());
-        }
-    }
-}
-
-// Ambil data produk dengan error handling
-try {
-    $stmt = $pdo->prepare("SELECT name FROM products WHERE id = ?");
-    $stmt->execute([$product_id]);
-    $product = $stmt->fetch();
-    
-    if (!$product) {
-        header("Location: ../index.php");
+    // Pengecekan session lebih ketat
+    if (!isset($_SESSION['loggedin'], $_SESSION['user_id'], $_SESSION['username'])) {
+        // Redirect path yang benar ke login
+        header("Location: ../auth/login.php?product_id=" . ($_GET['id'] ?? ''));
         exit;
     }
-    
-    // Definisikan product_name
-    $product_name = $product['name'];
-} catch (PDOException $e) {
-    die("Error loading product: " . $e->getMessage());
-}
-?>
 
-<main>
-    <div class="container">
-    <h1 class="add-comment-title">Add Comment for <?= htmlspecialchars($product_name) ?></h1>
+    // Path include yang benar dari folder products
+    require '../config/database.php';
+    include '../includes/header.php';
+
+    // Validasi product_id
+    $product_id = filter_var($_GET['id'] ?? 0, FILTER_VALIDATE_INT, [
+        'options' => ['min_range' => 1]
+    ]);
+
+    if (!$product_id) {
+        die("Invalid product ID");
+    }
+
+    // Handle form submission
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $comment = trim($_POST['comment'] ?? '');
         
-        <form method="POST" class="comment-form">
-            <input type="hidden" name="product_id" value="<?= $product_id ?>">
-            
-            <div class="form-group">
-                <label for="comment">Your Comment</label>
-                <textarea id="comment" name="comment" rows="5" required></textarea>
-            </div>
-            
-            <div class="form-actions">
-                <a href="comments.php?id=<?= $product_id ?>" class="cancel-btn">Cancel</a>
-                <button type="submit" class="submit-btn">Submit</button>
-            </div>
-        </form>
-    </div>
-</main>
+        if (!empty($comment)) {
+            try {
+                $stmt = $pdo->prepare("INSERT INTO comments (product_id, user_id, comment) VALUES (?, ?, ?)");
+                $stmt->execute([$product_id, $_SESSION['user_id'], htmlspecialchars($comment)]);
+                
+                header("Location: comments.php?id=$product_id");
+                exit;
+            } catch (PDOException $e) {
+                die("Error saving comment: " . $e->getMessage());
+            }
+        }
+    }
 
-<?php include '../includes/footer.php'; ?>
+    // Ambil data produk dengan error handling
+    try {
+        $stmt = $pdo->prepare("SELECT name FROM products WHERE id = ?");
+        $stmt->execute([$product_id]);
+        $product = $stmt->fetch();
+        
+        if (!$product) {
+            header("Location: ../index.php");
+            exit;
+        }
+        
+        // Definisikan product_name
+        $product_name = $product['name'];
+    } catch (PDOException $e) {
+        die("Error loading product: " . $e->getMessage());
+    }
+    ?>
+
+    <main>
+        <div class="container">
+        <h1 class="add-comment-title">Add Comment for <?= htmlspecialchars($product_name) ?></h1>
+            
+            <form method="POST" class="comment-form">
+                <input type="hidden" name="product_id" value="<?= $product_id ?>">
+                
+                <div class="form-group">
+                    <label for="comment">Your Comment</label>
+                    <textarea id="comment" name="comment" rows="5" required></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="comments.php?id=<?= $product_id ?>" class="cancel-btn">Cancel</a>
+                    <button type="submit" class="submit-btn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <?php include '../includes/footer.php'; ?>

@@ -10,11 +10,7 @@ body {
     background-color: #FDFCE8;
 }
 
-.container {
-    width: 90%;
-    max-width: 1400px;
-    margin: 0 auto;
-}
+
 
 /* Header Styles */
 header {
@@ -33,22 +29,48 @@ header .container {
     top: 5px;
     left: 42px;
 }
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #0000;
+}
+
+.remember-me label {
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
 .search-box {
     position: relative;
-    margin-left: 200px;
+    bottom: 1px;
+    left: 800px;
 }
 
 .search-box input {
     width: 300px;
     padding: 10px 15px;
     border: 1px solid #584C43;
-    border-radius: 20px;
+    border-radius: 5px;
     font-size: 16px;
     color: #969696;
+    background-color: transparent;
 }
 
-.search-box i,
 .search-box button {
     position: absolute;
     right: 15px;
@@ -58,11 +80,13 @@ header .container {
     background: none;
     border: none;
     cursor: pointer;
+    padding: 0;
 }
 
 .search-box form {
     position: relative;
     display: flex;
+    align-items: center;
 }
 
 .user-actions {
@@ -275,18 +299,30 @@ header .container {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
+.product-detail-card-page {
+    background-color: #E2CEB1;
+    width: 1300px;
+    margin: 50px auto;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    position: relative; /* Diperlukan untuk positioning absolute child */
+    min-height: 600px; /* Pastikan ada ruang untuk tombol di bawah */
+    padding-bottom: 100px; /* Ruang ekstra di bagian bawah */
+}
 
 .detail-title {
     color: #584C43;
     font-size: 36px;
     font-weight: 700;
     margin-bottom: 40px;
-    text-align: center;
+    text-align: left;
 }
 
 .product-detail-content {
     display: flex;
     gap: 60px;
+    margin-bottom: 20px; /* Tambahkan margin bawah */
 }
 
 .products {
@@ -348,6 +384,19 @@ header .container {
     margin-top: 40px;
 }
 
+.product-actions-container {
+    display: flex;
+    justify-content: flex-end;
+    position: absolute; /* Ubah ke absolute */
+    bottom: 30px; /* Atur jarak dari bawah */
+    right: 40px; /* Atur jarak dari kanan */
+    width: calc(100% - 80px); /* Sesuaikan dengan padding */
+}
+.product-actions-page {
+    display: flex;
+    gap: 15px; /* Gap lebih kecil dari sebelumnya */
+}
+
 .btn-primary {
     display: inline-block;
     padding: 12px 25px;
@@ -388,7 +437,7 @@ header .container {
 
 /* Comments Page Styles */
 .comment-btn {
-    background-color: #4E73DE;
+    background-color: #584C43;
     color: white;
     padding: 12px 25px;
     border: none;
@@ -618,6 +667,7 @@ header .container {
     justify-content: center;
 }
 
+
 .login-container {
     width: 100%;
     padding: 20px;
@@ -625,11 +675,10 @@ header .container {
 
 .login-card {
     background-color: #FFFFFF;
-    width: 595px;
-    height: 430px;
+    width: 450px; /* Lebih sempit dari sebelumnya */
     border-radius: 10px;
     border: 1px solid #ddd;
-    margin: 137px auto;
+    margin: 50px auto;
     padding: 40px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -658,18 +707,44 @@ header .container {
 }
 
 .login-btn {
-    padding: 8px 16px;
+    padding: 12px;
     background-color: #4E73DE;
     color: white;
-    border-radius: 20px;
-    text-decoration: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
     font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10zzpx;
 }
-
 .login-btn:hover {
     opacity: 0.9;
     transform: translateY(-2px);
 }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #584C43;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #584C43;
+    outline: none;
+}
+
 
 /* Search Results Styles */
 .search-results-title {
@@ -756,7 +831,7 @@ header .container {
 
 /* Header Variations */
 .main-header {
-    background-color: #fdfce9;
+    background-color: #ffff;
     padding: 10px 40px;
     font-family: 'Poppins', sans-serif;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);

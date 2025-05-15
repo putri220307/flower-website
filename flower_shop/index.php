@@ -47,7 +47,7 @@
         
         <!-- Products Section -->
         <div class="products">
-            <?php
+           <?php
             require 'config/database.php';
             
             // Build query based on filters

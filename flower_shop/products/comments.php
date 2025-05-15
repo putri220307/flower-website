@@ -5,8 +5,8 @@ require '../config/database.php';
 // Ambil ID produk dari URL
 $product_id = $_GET['id'] ?? 0;
 
-// Query untuk mendapatkan nama produk
-$stmt = $pdo->prepare("SELECT name FROM products WHERE id = ?");
+// Query untuk memeriksa keberadaan produk
+$stmt = $pdo->prepare("SELECT id FROM products WHERE id = ?");
 $stmt->execute([$product_id]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -18,10 +18,10 @@ if (!$product) {
 // Query untuk mendapatkan komentar
 $sort = $_GET['sort'] ?? 'newest';
 $orderBy = match($sort) {
-    'a-z' => 'username ASC',
-    'z-a' => 'username DESC',
-    'oldest' => 'created_at ASC',
-    default => 'created_at DESC'
+    'a-z' => 'users.username ASC',
+    'z-a' => 'users.username DESC',
+    'oldest' => 'comments.created_at ASC',
+    default => 'comments.created_at DESC'
 };
 
 $stmt = $pdo->prepare("
@@ -38,7 +38,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <main>
     <div class="container">
-        <h1 class="comments-title">Comment</h1>
+        <h1 class="comments-title">Comment</h1> <!-- Judul diubah menjadi umum -->
         
         <!-- Filter Dropdown -->
         <div class="comments-filter">
@@ -55,16 +55,17 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         <!-- Comments Table -->
         <div class="comments-table">
-            <?php foreach ($comments as $comment): ?>
-                <div class="comment-item">
-                    <div class="comment-number"><?= $comment['id'] ?></div>
-                    <div class="comment-user"><?= htmlspecialchars($comment['username']) ?></div>
-                    <div class="comment-text"><?= htmlspecialchars($comment['comment']) ?></div>
-                </div>
-            <?php endforeach; ?>
-            
-            <?php if (empty($comments)): ?>
-                <div class="no-comments">Belum ada komentar untuk produk ini.</div>
+            <?php if (!empty($comments)): ?>
+                <?php foreach ($comments as $index => $comment): ?>
+                    <div class="comment-item">
+                        <div class="comment-number"><?= $index + 1 ?></div>
+                        <div class="comment-user"><?= htmlspecialchars($comment['username']) ?></div>
+                        <div class="comment-text"><?= htmlspecialchars($comment['comment']) ?></div>
+                        <div class="comment-date"><?= date('d M Y', strtotime($comment['created_at'])) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="no-comments">Belum ada komentar.</div> <!-- Pesan disederhanakan -->
             <?php endif; ?>
         </div>
         
