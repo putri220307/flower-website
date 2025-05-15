@@ -1,7 +1,7 @@
 <?php include 'includes/header.php'; ?>
 
 <main>
-    <div class="container">
+    <div class="container-page">
         <!-- Slider Section -->
         <div class="slider">
             <!-- Slide Dots -->
@@ -73,7 +73,7 @@
             
             if (count($products) > 0): 
                 foreach ($products as $product): ?>
-                    <div class="product-card">
+                    <div class="product-card-page">
                         <div class="product-image-container">
                             <img src="assets/images/products/<?php echo htmlspecialchars($product['image']); ?>" 
                                  alt="<?php echo htmlspecialchars($product['name']); ?>">
@@ -91,6 +91,36 @@
         </div>
     </div>
 </main>
+
+<style>
+    .container-page{
+    max-width: 1200px; /* atau samakan dengan ukuran slider */
+    margin: 0 auto;
+    padding: 0 20px; /* beri padding kiri kanan */
+}
+
+.slider {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* atau use space-between */
+    gap: 20px;
+}
+
+.product-card-page {
+    width: 250px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #FDFCE8;
+}
+
+</style>
 <script>
     let currentIndex = 0;
     const slides = document.querySelectorAll('.slides .slide');

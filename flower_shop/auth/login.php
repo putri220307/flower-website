@@ -2,9 +2,10 @@
 session_start();
 $hideHeader = true; // Supaya header tidak muncul
 include '../includes/header.php';
-require '../config/database.php';  // Pastikan koneksi ke database sudah benar
+require '../config/database.php';
 
 $productId = $_GET['product_id'] ?? '';
+$redirectFrom = $_GET['from'] ?? ''; // Tambahkan parameter untuk mengetahui asal halaman
 
 // Handle remember me cookie
 if (isset($_COOKIE['remember_user'])) {
@@ -14,12 +15,17 @@ if (isset($_COOKIE['remember_user'])) {
     }
 }
 
-// Jika sudah login, redirect ke halaman yang sesuai berdasarkan role
+// Jika sudah login, redirect ke halaman yang sesuai
 if (isset($_SESSION['loggedin'])) {
     if ($_SESSION['role'] === 'admin') {
         header("Location: ../admin/dashboard.php");
     } else {
-        header("Location: ../products/add-comment.php?id=".($_GET['product_id']??''));
+        // Logika redirect baru berdasarkan asal halaman
+        if ($redirectFrom === 'comment') {
+            header("Location: ../products/add-comment.php?id=".$productId);
+        } else {
+            header("Location: ../index.php");
+        }
     }
     exit;
 }
@@ -35,30 +41,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$username]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Cek apakah username dan password cocok
     if ($user && $password === $user['password']) {
         $_SESSION['loggedin'] = true;
         $_SESSION['username'] = $username;
         $_SESSION['profile_pic'] = $user['profile_picture'];
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['role'] = $user['role'];  // Simpan role user di session
+        $_SESSION['role'] = $user['role'];
         
         // Set cookie jika remember me dicentang
         if ($remember) {
             $cookieValue = json_encode(['username' => $username]);
-            setcookie('remember_user', $cookieValue, time() + (30 * 24 * 60 * 60), '/'); // 30 hari
+            setcookie('remember_user', $cookieValue, time() + (30 * 24 * 60 * 60), '/');
         } else {
-            // Hapus cookie jika ada
             if (isset($_COOKIE['remember_user'])) {
                 setcookie('remember_user', '', time() - 3600, '/');
             }
         }
         
-        // Redirect ke halaman yang sesuai berdasarkan role
+        // Redirect berdasarkan role dan asal halaman
         if ($user['role'] === 'admin') {
             header("Location: ../admin/dashboard.php");
         } else {
-            header("Location: ../products/add-comment.php?id=" . ($_GET['product_id'] ?? ''));
+            // Logika redirect baru
+            if (isset($_POST['redirect_from']) && $_POST['redirect_from'] === 'comment') {
+                header("Location: ../products/add-comment.php?id=".$productId);
+            } else {
+                header("Location: ../index.php");
+            }
         }
         exit;
     } else {
@@ -77,6 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" class="login-form">
+                <!-- Tambahkan input hidden untuk menyimpan asal halaman -->
+                <input type="hidden" name="redirect_from" value="<?php echo $redirectFrom === 'comment' ? 'comment' : 'index'; ?>">
+                
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" placeholder="Enter Username..." 

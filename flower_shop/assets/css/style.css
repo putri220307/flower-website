@@ -335,10 +335,9 @@ header .container {
 .product-card {
     width: 300px;
     height: 350px;
-    background: white;
+    background: FDFCE8;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     transition: all 0.3s;
