@@ -8,13 +8,42 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit;
 }
-function logActivity($pdo, $userId, $activityType, $description) {
+
+// Inisialisasi variabel dengan array kosong sebagai default
+$unverifiedUsers = [];
+
+try {
+    // Pastikan query ini menggunakan kondisi yang tepat
     $stmt = $pdo->prepare("
-        INSERT INTO activity_log 
-        (user_id, activity_type, description) 
-        VALUES (?, ?, ?)
+        SELECT id, username, created_at 
+        FROM users 
+        WHERE is_verified = FALSE OR is_verified = 0
+        ORDER BY created_at DESC
     ");
-    $stmt->execute([$userId, $activityType, $description]);
+    $stmt->execute();
+    $unverifiedUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Debugging - tampilkan hasil query
+    error_log("Unverified users: " . print_r($unverifiedUsers, true));
+} catch (PDOException $e) {
+    error_log("Error fetching unverified users: " . $e->getMessage());
+    $unverifiedUsers = [];
+}
+
+// Handle verifikasi user
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_user'])) {
+    $userId = $_POST['user_id'] ?? null;
+    if ($userId && isset($_POST['csrf_token']) && $_POST['csrf_token'] === $_SESSION['csrf_token']) {
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET is_verified = TRUE WHERE id = ?");
+            $stmt->execute([$userId]);
+            header("Location: dashboard.php?verified=1");
+            exit;
+        } catch (PDOException $e) {
+            error_log("Error verifying user: " . $e->getMessage());
+            $verificationError = "Gagal memverifikasi user. Silakan coba lagi.";
+        }
+    }
 }
 
 // CSRF Token Generation
@@ -151,6 +180,56 @@ if (empty($_SESSION['csrf_token'])) {
             transition: all 0.3s;
         }
         
+        .alert {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .user-table th {
+        background-color: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+    }
+    
+    .user-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .verify-btn {
+        background: #1cc88a;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .verify-btn:hover {
+        background: #17a673;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 3px 7px;
+        border-radius: 50%;
+        background: #e74a3b;
+        color: white;
+        font-size: 12px;
+        margin-left: 5px;
+    }
         .logout-btn:hover {
             background-color: #c82333;
         }
@@ -329,6 +408,7 @@ if (empty($_SESSION['csrf_token'])) {
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
+            
             <h2><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></h2>
         </div>
         
@@ -431,6 +511,58 @@ if (empty($_SESSION['csrf_token'])) {
             &copy; <?php echo date('Y'); ?> FLORAZZIU - Sistem Rekomendasi Bunga. All rights reserved.
         </div>
     </div>
+    <!-- Notifikasi User Baru -->
+<!-- Di dashboard.php bagian HTML -->
+<div class="data-section" id="unverified-users-container">
+    <h2><i class="fas fa-user-clock"></i> User Baru Perlu Verifikasi</h2>
+    
+    <?php if (isset($_GET['verified'])): ?>
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> User berhasil diverifikasi!
+        </div>
+    <?php endif; ?>
+    
+    <?php if (!empty($verificationError)): ?>
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($verificationError) ?>
+        </div>
+    <?php endif; ?>
+    
+    <?php if (!empty($unverifiedUsers)): ?>
+        <div class="table-responsive">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Tanggal Registrasi</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($unverifiedUsers as $user): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($user['username'] ?? 'N/A') ?></td>
+                            <td><?= date('d/m/Y H:i', strtotime($user['created_at'] ?? 'now')) ?></td>
+                            <td>
+                                <form method="POST">
+                                    <input type="hidden" name="user_id" value="<?= $user['id'] ?? '' ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <button type="submit" name="verify_user" class="verify-btn">
+                                        <i class="fas fa-check"></i> Verifikasi
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-info">
+            <i class="fas fa-check-circle"></i> Tidak ada user baru yang perlu diverifikasi
+        </div>
+    <?php endif; ?>
+</div>
     
     <script>
         // Toggle submenu

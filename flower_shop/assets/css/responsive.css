@@ -1,0 +1,15 @@
+/* Mobile First Approach */
+/* Tablet (768px ke bawah) */
+@media (max-width: 768px) {
+  .header-flex { flex-direction: column; }
+  .search-box { width: 100%; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile (480px ke bawah) */
+@media (max-width: 480px) {
+  .logo img { width: 120px; }
+  .product-grid { grid-template-columns: 1fr; }
+  .user-actions { flex-direction: column; }
+}
+
