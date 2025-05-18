@@ -64,10 +64,9 @@ include '../includes/header.php';
                         </form>
                         <form method="POST" style="display: inline;">
                             <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                            <button type="submit" name="delete_user" class="btn btn-danger">Hapus</button>
+                            <button type="submit" name="delete_user" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus user ini?')">Hapus</button>
                         </form>
                     </td>
-                    <button type="submit" name="delete_user" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus user ini?')">Hapus</button>
 
                 </tr>
             <?php endforeach; ?>

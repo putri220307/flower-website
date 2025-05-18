@@ -1,18 +1,33 @@
 <?php
-$host = 'localhost';
-$dbname = 'flower_shop';
-$username = 'root';
-$password = '';
+// Pastikan error reporting aktif untuk debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-
+// Koneksi database
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $host = 'localhost';
+    $dbname = 'flower_shop';
+    $username = 'root';
+    $password = '';
+    
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    
+    // Set atribut PDO
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // Tambahkan setelah koneksi PDO
-$pdo->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES 'utf8mb4'");
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->exec("SET CHARACTER SET utf8mb4");
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    
+    // Optimasi tambahan (jika diperlukan)
+    // $pdo->exec("SET SESSION wait_timeout = 600");
+    
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    // Tangani error koneksi dengan lebih baik
+    error_log('Database connection failed: ' . $e->getMessage());
+    die('Database connection error. Please try again later.');
+}
+
+// Pastikan variabel $pdo ada sebelum digunakan
+if (!isset($pdo)) {
+    die('Database connection not initialized');
 }
 ?>

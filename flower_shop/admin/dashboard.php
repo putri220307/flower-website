@@ -1,7 +1,7 @@
 dashboard.php
 <?php
 session_start();
-require '../config/database.php';
+require __DIR__.'/../config/database.php';
 
 // Enhanced security check
 if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
@@ -59,350 +59,7 @@ if (empty($_SESSION['csrf_token'])) {
     <title>Admin Dashboard - FLORAZZIU</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --sidebar-bg: #E2CEB1;
-            --main-bg: #FDFCE8;
-            --text-dark: #584C43;
-            --text-light: #FFFFFF;
-            --accent-color: #4E73DE;
-            --danger-color: #E74A3B;
-            --success-color: #1CC88A;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        body {
-            display: flex;
-            min-height: 100vh;
-            background-color: var(--main-bg);
-        }
-        
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background-color: var(--sidebar-bg);
-            color: var(--text-dark);
-            height: 100vh;
-            position: fixed;
-            padding: 20px 0;
-            transition: all 0.3s;
-        }
-        
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(88, 76, 67, 0.2);
-        }
-        
-        .sidebar-header h2 {
-            font-size: 20px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .sidebar-menu {
-            margin-top: 20px;
-            position: relative;
-            min-height: calc(100vh - 120px);
-        }
-        
-        .menu-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-        }
-        
-        .menu-item:hover {
-            background-color: rgba(88, 76, 67, 0.1);
-        }
-        
-        .menu-item i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
-        
-        .menu-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 20px 20px 10px;
-            color: var(--text-dark);
-        }
-        
-        .submenu {
-            padding-left: 20px;
-            display: none;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .submenu.show {
-            display: block;
-        }
-        
-        .submenu-item {
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-        }
-        
-        .submenu-item:hover {
-            background-color: rgba(88, 76, 67, 0.1);
-        }
-        
-        .submenu-item i {
-            color: var(--accent-color);
-        }
-        
-        .logout-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            padding: 12px;
-            background-color: var(--danger-color);
-            color: var(--text-light);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .alert {
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 4px;
-    }
-    
-    .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-    }
-    
-    .user-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .user-table th {
-        background-color: #f8f9fa;
-        padding: 12px;
-        text-align: left;
-    }
-    
-    .user-table td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .verify-btn {
-        background: #1cc88a;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
-    
-    .verify-btn:hover {
-        background: #17a673;
-    }
-    
-    .badge {
-        display: inline-block;
-        padding: 3px 7px;
-        border-radius: 50%;
-        background: #e74a3b;
-        color: white;
-        font-size: 12px;
-        margin-left: 5px;
-    }
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
-        
-        /* Main Content Styles */
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 30px;
-            transition: all 0.3s;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .header h1 {
-            color: var(--text-dark);
-            font-size: 28px;
-        }
-        
-        .user-info {
-            background-color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            font-weight: 500;
-        }
-        
-        .welcome-message {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-        
-        .welcome-message h2 {
-            color: var(--text-dark);
-            margin-bottom: 15px;
-        }
-        
-        .welcome-message p {
-            color: var(--text-dark);
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        
-        .data-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-        
-        .data-section h2 {
-            color: var(--text-dark);
-            margin-bottom: 20px;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .data-section h2 i {
-            color: var(--accent-color);
-        }
-        
-        .data-list {
-            list-style-type: none;
-        }
-        
-        .data-list li {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s;
-        }
-        
-        .data-list li:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .data-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .data-list i {
-            margin-right: 10px;
-            color: var(--accent-color);
-        }
-        
-        .data-card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .data-card {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-        }
-        
-        .data-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .data-card h3 {
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .data-card i {
-            font-size: 20px;
-        }
-        
-        .data-card .count {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-        
-        .copyright {
-            text-align: center;
-            color: var(--text-dark);
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: 14px;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 80px;
-                overflow: hidden;
-            }
-            
-            .sidebar-header h2 span,
-            .menu-item span,
-            .submenu-item span {
-                display: none;
-            }
-            
-            .menu-item, .submenu-item {
-                justify-content: center;
-            }
-            
-            .menu-item i, .submenu-item i {
-                margin-right: 0;
-                font-size: 1.2rem;
-            }
-            
-            .main-content {
-                margin-left: 80px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -491,25 +148,27 @@ if (empty($_SESSION['csrf_token'])) {
         
         <div class="data-section">
             <h2><i class="fas fa-bell"></i> Aktivitas Terkini</h2>
-            <ul class="data-list">
-                <li>
-                    <i class="fas fa-user-plus text-success"></i> User baru "johndoe" terdaftar (5 menit lalu)
-                </li>
-                <li>
-                    <i class="fas fa-comment"></i> Komentar baru pada bunga "Mawar Merah" (12 menit lalu)
+            <ul class="data-list" id="recent-activities">
+        <!-- Konten akan diisi oleh JavaScript -->
+        <li>Memuat data aktivitas...</li>
+                    <!-- <i class="fas fa-comment"></i> Komentar baru pada bunga "Mawar Merah" (12 menit lalu)
                 </li>
                 <li>
                     <i class="fas fa-edit"></i> Data bunga "Anggrek Bulan" diperbarui (30 menit lalu)
                 </li>
                 <li>
                     <i class="fas fa-sign-in-alt"></i> Admin login dari IP 192.168.1.1 (1 jam lalu)
-                </li>
+                </li> -->
             </ul>
         </div>
         
         <div class="copyright">
             &copy; <?php echo date('Y'); ?> FLORAZZIU - Sistem Rekomendasi Bunga. All rights reserved.
         </div>
+        <?php if (!empty($unverifiedUsers)) : ?>
+
+<?php endif; ?>
+
     </div>
     <!-- Notifikasi User Baru -->
 <!-- Di dashboard.php bagian HTML -->
@@ -551,8 +210,10 @@ if (empty($_SESSION['csrf_token'])) {
                                         <i class="fas fa-check"></i> Verifikasi
                                     </button>
                                 </form>
+                                
                             </td>
                         </tr>
+                        
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -591,6 +252,135 @@ setInterval(refreshComments, 15000);
         
         window.addEventListener('resize', checkScreenSize);
         checkScreenSize();
+// Ubah interval update menjadi lebih cepat (contoh: 10 detik)
+function updateRecentActivities() {
+    fetch('fetch_recent_activities.php?t=' + new Date().getTime()) // Tambah timestamp untuk hindari cache
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(activities => {
+            const container = document.getElementById('recent-activities');
+            
+            if (activities.error) {
+                container.innerHTML = `<li>Error: ${activities.error}</li>`;
+                return;
+            }
+            
+            if (activities.length === 0) {
+                container.innerHTML = '<li>Tidak ada aktivitas terbaru</li>';
+                return;
+            }
+            
+            let html = '';
+            activities.forEach(activity => {
+                // Kirim timestamp asli ke client dan format di sisi client
+                const timestamp = new Date(activity.created_at).getTime();
+                
+                if (activity.type === 'user_baru') {
+                    html += `
+                        <li>
+                            <i class="fas fa-user-plus"></i> 
+                            User <b><strong>${activity.username}</strong></b> terdaftar 
+                            <span class="activity-time" data-timestamp="${timestamp}"></span>
+                        </li>
+                    `;
+                } else if (activity.type === 'admin_login') {
+                    html += `
+                        <li>
+                            <i class="fas fa-sign-in-alt"></i> 
+                            Admin <strong>${activity.username}</strong> login 
+                            <span class="activity-time" data-timestamp="${timestamp}"></span>
+                        </li>
+                    `;
+                }
+            });
+            
+            container.innerHTML = html;
+            updateActivityTimes(); // Panggil fungsi untuk update waktu
+        })
+        .catch(error => {
+            console.error('Error fetching activities:', error);
+            document.getElementById('recent-activities').innerHTML = 
+                `<li>Gagal memuat aktivitas: ${error.message}</li>`;
+        });
+}
+
+// Fungsi untuk update waktu secara realtime di client
+// Fungsi untuk update aktivitas
+function updateRecentActivities() {
+    fetch('fetch_recent_activities.php?t=' + new Date().getTime())
+        .then(response => response.json())
+        .then(activities => {
+            const container = document.getElementById('recent-activities');
+            container.innerHTML = ''; // Kosongkan dulu
+            
+            if (activities.error) {
+                container.innerHTML = `<li>${activities.error}</li>`;
+                return;
+            }
+            
+            if (activities.length === 0) {
+                container.innerHTML = '<li>Tidak ada aktivitas terbaru</li>';
+                return;
+            }
+            
+            activities.forEach(activity => {
+                const li = document.createElement('li');
+                const icon = document.createElement('i');
+                icon.className = activity.type === 'user_baru' ? 
+                    'fas fa-user-plus' : 'fas fa-sign-in-alt';
+                
+                li.appendChild(icon);
+                
+                const text = activity.type === 'user_baru' ?
+                    ` User <strong>${activity.username}</strong> terdaftar` :
+                    ` Admin <strong>${activity.username}</strong> login`;
+                
+                li.innerHTML += text + ` <span class="time-ago">(${formatTimeAgo(new Date(activity.created_at))})</span>`;
+                
+                // Jika user baru, tambahkan di paling atas
+                if (activity.type === 'user_baru') {
+                    container.insertBefore(li, container.firstChild);
+                } else {
+                    container.appendChild(li);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+// Format waktu lebih akurat
+function formatTimeAgo(date) {
+    const now = new Date();
+    const diff = (now - date) / 1000; // dalam detik
+    
+    if (diff < 60) return 'baru saja';
+    if (diff < 3600) return `${Math.floor(diff/60)} menit yang lalu`;
+    if (diff < 86400) return `${Math.floor(diff/3600)} jam yang lalu`;
+    return `${Math.floor(diff/86400)} hari yang lalu`;
+}
+
+// Update pertama kali
+updateRecentActivities();
+
+// Gunakan interval lebih pendek (5 detik)
+setInterval(updateRecentActivities, 5000);
+
+// Tambahkan event listener untuk update saat ada user baru
+document.addEventListener('DOMContentLoaded', function() {
+    const eventSource = new EventSource('realtime_activities.php');
+    
+    eventSource.onmessage = function(e) {
+        if (e.data === 'new_activity') {
+            updateRecentActivities(); // Langsung update ketika ada aktivitas baru
+        }
+    };
+});
+
     </script>
+
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php include 'includes/header.php'; ?>
-
+<head><meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 <main>
     <div class="container-page">
         <!-- Slider Section -->

@@ -33,6 +33,7 @@ if (isset($_SESSION['loggedin'])) {
 // Handle login form
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $username = $_POST['username'] ?? '';
+    $email = $_POST['reg_email'] ?? '';
     $password = $_POST['password'] ?? '';
     $remember = isset($_POST['remember']);
 
@@ -91,25 +92,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 // Handle registration form
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
     $username = $_POST['reg_username'] ?? '';
+    $email = $_POST['reg_email'] ?? '';
     $password = $_POST['reg_password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
     // Validasi registrasi
-    if (empty($username) || empty($password) || empty($confirmPassword)) {
+     if (empty($username) || empty($email) || empty($password) || empty($confirmPassword)) {
         $regError = "Semua field harus diisi";
     } elseif ($password !== $confirmPassword) {
         $regError = "Password dan konfirmasi password tidak cocok";
     } else {
         // Cek apakah username sudah ada
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
-        $stmt->execute([$username]);
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+        $stmt->execute([$username, $email]);
         
         if ($stmt->fetch()) {
-            $regError = "Username sudah digunakan";
+            $regError = "Username & email sudah digunakan ";
         } else {
             // Default role adalah 'user' dan is_verified false
-            $stmt = $pdo->prepare("INSERT INTO users (username, password, role, is_verified) VALUES (?, ?, 'user', FALSE)");
-            if ($stmt->execute([$username, $password])) {
+           $stmt = $pdo->prepare("INSERT INTO users (username, password, email, role, is_verified) VALUES (?, ?, ?, ?, ?)");
+            if ($stmt->execute([$username, $password, $email, 'user', false])) {
                 $regSuccess = "Registrasi berhasil! Silakan tunggu verifikasi dari admin.";
             } else {
                 $regError = "Gagal melakukan registrasi. Silakan coba lagi.";
@@ -178,6 +180,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
                         </div>
 
                         <div class="form-group">
+                        <label for="reg_email">Email</label>
+                        <input type="email" id="reg_email" name="reg_email" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="form-group">
                             <label for="reg_password">Password</label>
                             <input type="password" id="reg_password" name="reg_password" placeholder="Create a password" required>
                         </div>
@@ -188,6 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
                         </div>
 
                         <button type="submit" class="register-btn">Register</button>
+                        
                     </form>
                 <?php endif; ?>
             </div>
@@ -196,6 +204,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
 </main>
 
 <script>
+    <?php if (isset($regSuccess)): ?>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('.tab-btn[data-tab="register"]').click();
+    });
+<?php endif; ?>
 // Tab switching functionality
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -209,6 +222,15 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         document.getElementById(`${tabName}-tab`).classList.add('active');
     });
 });
+ document.addEventListener('DOMContentLoaded', function () {
+        // Aktifkan tombol tab register
+        document.querySelector('.tab-btn[data-tab="register"]').classList.add('active');
+        document.querySelector('.tab-btn[data-tab="login"]').classList.remove('active');
+
+        // Tampilkan form register, sembunyikan login
+        document.getElementById('register-tab').classList.add('active');
+        document.getElementById('login-tab').classList.remove('active');
+    });
 </script>
 
 <?php include '../includes/footer.php'; ?>

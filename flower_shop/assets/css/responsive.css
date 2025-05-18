@@ -1,15 +1,28 @@
-/* Mobile First Approach */
-/* Tablet (768px ke bawah) */
-@media (max-width: 768px) {
-  .header-flex { flex-direction: column; }
-  .search-box { width: 100%; }
-  .product-grid { grid-template-columns: repeat(2, 1fr); }
+/* Style default buat desktop */
+.container {
+  width: 80%;
+  margin: auto;
 }
 
-/* Mobile (480px ke bawah) */
-@media (max-width: 480px) {
-  .logo img { width: 120px; }
-  .product-grid { grid-template-columns: 1fr; }
-  .user-actions { flex-direction: column; }
+/* Untuk tablet */
+@media screen and (max-width: 992px) {
+  .container {
+    width: 90%;
+  }
 }
 
+/* Untuk hp */
+@media screen and (max-width: 768px) {
+  .container {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  nav {
+    flex-direction: column;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}

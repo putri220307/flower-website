@@ -8,9 +8,9 @@ $searchQuery = trim($_GET['query'] ?? '');
 // Query pencarian produk hanya jika ada kata kunci
 if (!empty($searchQuery)) {
     $stmt = $pdo->prepare("SELECT * FROM products 
-                          WHERE name LIKE ? OR description LIKE ?
-                          ORDER BY name ASC");
-    $stmt->execute(["%$searchQuery%", "%$searchQuery%"]);
+                      WHERE name LIKE ? OR description LIKE ?
+                      ORDER BY name ASC");
+$stmt->execute(["$searchQuery%", "$searchQuery%"]);
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
     // Jika search kosong, arahkan ke halaman utama
