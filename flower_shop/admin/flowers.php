@@ -91,9 +91,37 @@ try {
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- ... (same sidebar content as dashboard.php) ... -->
+          <div class="sidebar-header">
+    <h2><a href="dashboard.php" style="color: inherit; text-decoration: none;">
+        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+    </a></h2>
+        <div class="menu-title">Data Master</div>
+        
+            
+            <div class="menu-item" onclick="toggleSubmenu('data-master')">
+                <i class="fas fa-database"></i> <span>Data Master</span>
+            </div>
+            <div class="submenu" id="data-master">
+                <a href="flowers.php" class="submenu-item">
+                    <i class="fas fa-flower"></i> <span>Data Bunga</span>
+                </a>
+                <a href="sliders.php" class="submenu-item">
+                    <i class="fas fa-images"></i> <span>Data Slider</span>
+                </a>
+                <a href="comments.php" class="submenu-item">
+                    <i class="fas fa-comments"></i> <span>Data Komentar</span>
+                </a>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-users"></i> <span>Manajemen User</span>
+            </div>
+            <button class="logout-btn" onclick="window.location.href='logout.php'">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </button>
+        </div>
     </div>
-    
+
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">

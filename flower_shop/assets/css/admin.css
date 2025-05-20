@@ -46,6 +46,24 @@ body {
     gap: 10px;
 }
 
+.sidebar-header a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+}
+
+.sidebar-header a:hover {
+    opacity: 0.8;
+}
+
+.submenu-item.active {
+    background-color: rgba(88, 76, 67, 0.1);
+    border-left: 3px solid var(--accent-color);
+    font-weight: 500;
+}
 .sidebar-menu {
     margin-top: 20px;
     position: relative;

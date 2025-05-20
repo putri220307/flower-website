@@ -88,7 +88,9 @@ if (empty($_SESSION['csrf_token'])) {
     <div class="sidebar">
         <div class="sidebar-header">
             
-            <h2><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></h2>
+            <h2><a href="dashboard.php" style="color: inherit; text-decoration: none;">
+        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+    </a></h2>
         </div>
         
         <div class="sidebar-menu">
