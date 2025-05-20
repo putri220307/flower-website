@@ -46,24 +46,6 @@ body {
     gap: 10px;
 }
 
-.sidebar-header a {
-    color: inherit;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 5px 0;
-}
-
-.sidebar-header a:hover {
-    opacity: 0.8;
-}
-
-.submenu-item.active {
-    background-color: rgba(88, 76, 67, 0.1);
-    border-left: 3px solid var(--accent-color);
-    font-weight: 500;
-}
 .sidebar-menu {
     margin-top: 20px;
     position: relative;
@@ -694,4 +676,27 @@ body {
     margin: 5px 0 0;
     font-size: 13px;
     color: #666;
+}   
+
+.color-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 12px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+/* Warna khusus untuk teks agar terbaca di background gelap */
+.color-badge[style*="hitam"],
+.color-badge[style*="hijau"],
+.color-badge[style*="biru"],
+.color-badge[style*="ungu"] {
+    color: white;
+}
+
+.color-badge[style*="putih"],
+.color-badge[style*="kuning"],
+.color-badge[style*="pink"] {
+    color: #333;
 }

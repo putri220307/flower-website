@@ -27,6 +27,7 @@ $stmt->execute(["$searchQuery%", "$searchQuery%"]);
             <div class="products">
                 <?php foreach ($products as $product): ?>
                     <div class="product-card">
+                        
                         <div class="product-image-container">
                             <img src="assets/images/products/<?= htmlspecialchars($product['image']) ?>" 
                                  alt="<?= htmlspecialchars($product['name']) ?>"

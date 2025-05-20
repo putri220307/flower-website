@@ -8,17 +8,33 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+// Daftar warna yang tersedia
+$availableColors = [
+    'biru', 'ungu', 'pink', 'putih', 
+    'merah', 'kuning', 'hijau', 'hitam'
+];
+
+// Inisialisasi variabel error
+$error = '';
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_flower'])) {
         // Handle add flower
         $name = $_POST['name'];
         $description = $_POST['description'];
+        $category = 'bunga';
+        $color = $_POST['color'] ?? ''; // Ambil warna dari form
+        
+        // Validasi warna
+        if (!in_array($color, $availableColors)) {
+            $error = "Warna yang dipilih tidak valid";
+        }
         
         // Handle image upload
         $imagePath = '';
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/flowers/';
+            $uploadDir = '../uploads/admin/flowers/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -28,29 +44,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $destination = $uploadDir . $filename;
             
             if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-                $imagePath = 'uploads/flowers/' . $filename;
+                $imagePath = '/uploads/admin/flowers/' . $filename;
+            } else {
+                $error = "Gagal mengupload gambar";
             }
         }
         
-        try {
-            $stmt = $pdo->prepare("INSERT INTO flowers (name, description, image_path) VALUES (?, ?, ?)");
-            $stmt->execute([$name, $description, $imagePath]);
-            header("Location: flowers.php?success=1");
-            exit;
-        } catch (PDOException $e) {
-            $error = "Gagal menambahkan bunga: " . $e->getMessage();
+        if (empty($error)) {
+            try {
+                $stmt = $pdo->prepare("INSERT INTO products (name, description, image_path, category, color) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $description, $imagePath, $category, $color]);
+                header("Location: flowers.php?success=1");
+                exit;
+            } catch (PDOException $e) {
+                $error = "Gagal menambahkan bunga: ".$e->getMessage();
+            }
         }
     } elseif (isset($_POST['delete_flower'])) {
-        // Handle delete flower
+        // Handle delete flower (tetap sama)
         $id = $_POST['id'];
         
         try {
             // First get image path to delete file
-            $stmt = $pdo->prepare("SELECT image_path FROM flowers WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT image_path FROM products WHERE id = ? AND category = 'bunga'");
             $stmt->execute([$id]);
             $flower = $stmt->fetch();
             
-            if ($flower && $flower['image_path']) {
+            if ($flower && !empty($flower['image_path'])) {
                 $filePath = '../' . $flower['image_path'];
                 if (file_exists($filePath)) {
                     unlink($filePath);
@@ -58,8 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // Then delete from database
-            $stmt = $pdo->prepare("DELETE FROM flowers WHERE id = ?");
+            $stmt = $pdo->prepare("DELETE FROM products WHERE id = ? AND category = 'bunga'");
             $stmt->execute([$id]);
+            
             header("Location: flowers.php?success=1");
             exit;
         } catch (PDOException $e) {
@@ -70,10 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all flowers
 try {
-    $stmt = $pdo->query("SELECT * FROM flowers ORDER BY id DESC");
+    $stmt = $pdo->query("SELECT * FROM products WHERE category = 'bunga' ORDER BY id DESC");
     $flowers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $error = "Gagal mengambil data bunga: " . $e->getMessage();
+    $error = "Gagal mengambil data bunga: ".$e->getMessage();
     $flowers = [];
 }
 ?>
@@ -91,18 +112,20 @@ try {
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-          <div class="sidebar-header">
-    <h2><a href="dashboard.php" style="color: inherit; text-decoration: none;">
-        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-    </a></h2>
-        <div class="menu-title">Data Master</div>
+    <div class="sidebar-header">
+        <a href="dashboard.php" class="dashboard-link">
+            <h2><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></h2>
+        </a>
+    </div>
         
+        <div class="sidebar-menu">
+            <div class="menu-title">Data Master</div>
             
-            <div class="menu-item" onclick="toggleSubmenu('data-master')">
+            <div class="menu-item active" onclick="toggleSubmenu('data-master')">
                 <i class="fas fa-database"></i> <span>Data Master</span>
             </div>
-            <div class="submenu" id="data-master">
-                <a href="flowers.php" class="submenu-item">
+            <div class="submenu show" id="data-master">
+                <a href="flowers.php" class="submenu-item active">
                     <i class="fas fa-flower"></i> <span>Data Bunga</span>
                 </a>
                 <a href="sliders.php" class="submenu-item">
@@ -121,7 +144,7 @@ try {
             </button>
         </div>
     </div>
-
+    
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
@@ -153,31 +176,37 @@ try {
                             <th>No</th>
                             <th>Nama Bunga</th>
                             <th>Deskripsi</th>
+                             <th>Warna</th>
                             <th>Gambar</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($flowers as $index => $flower): ?>
-                            <tr>
-                                <td><?= $index + 1 ?></td>
-                                <td><?= htmlspecialchars($flower['name']) ?></td>
-                                <td><?= htmlspecialchars($flower['description']) ?></td>
-                                <td>
-                                    <?php if ($flower['image_path']): ?>
-                                        <img src="../<?= htmlspecialchars($flower['image_path']) ?>" alt="<?= htmlspecialchars($flower['name']) ?>" width="80">
-                                    <?php else: ?>
-                                        <span class="no-image">No Image</span>
-                                    <?php endif; ?>
+            <tr>
+                <td><?= $index + 1 ?></td>
+                <td><?= htmlspecialchars($flower['name']) ?></td>
+                <td>
+                    <span class="color-badge" style="background-color: <?= htmlspecialchars($flower['color']) ?>">
+                        <?= ucfirst(htmlspecialchars($flower['color'])) ?>
+                    </span>
+                </td>
+                <td><?= htmlspecialchars($flower['description']) ?></td>
+                <td>
+                    <?php if ($flower['image_path']): ?>
+                        <img src="../<?= htmlspecialchars($flower['image_path']) ?>" alt="<?= htmlspecialchars($flower['name']) ?>" width="80">
+                    <?php else: ?>
+                        <span class="no-image">No Image</span>
+                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <a href="edit_flower.php?id=<?= $flower['id'] ?>" class="btn btn-edit">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i> 
                                     </a>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="id" value="<?= $flower['id'] ?>">
                                         <button type="submit" name="delete_flower" class="btn btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus bunga ini?')">
-                                            <i class="fas fa-trash"></i> Hapus
+                                            <i class="fas fa-trash"></i> 
                                         </button>
                                     </form>
                                 </td>
@@ -199,7 +228,20 @@ try {
                         <label for="description">Deskripsi</label>
                         <textarea id="description" name="description" rows="3" required></textarea>
                     </div>
-                    
+                    <div class="form-group">
+            <label for="color">Warna Bunga</label>
+            <select id="color" name="color" required>
+                <option value="">Pilih Warna</option>
+                <option value="biru">Biru</option>
+                <option value="ungu">Ungu</option>
+                <option value="pink">Pink</option>
+                <option value="putih">Putih</option>
+                <option value="merah">Merah</option>
+                <option value="kuning">Kuning</option>
+                <option value="hijau">Hijau</option>
+                <option value="hitam">Hitam</option>
+            </select>
+        </div>
                     <div class="form-group">
                         <label for="image">Gambar Bunga</label>
                         <input type="file" id="image" name="image" accept="image/*">
@@ -214,11 +256,27 @@ try {
     </div>
     
     <script>
-        // Toggle submenu (same as dashboard)
+        // Toggle submenu
         function toggleSubmenu(id) {
             const submenu = document.getElementById(id);
             submenu.classList.toggle('show');
         }
+
+        // Mobile responsive
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.add('collapsed');
+            } else {
+                document.querySelector('.sidebar').classList.remove('collapsed');
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile responsive check
+            checkScreenSize();
+            window.addEventListener('resize', checkScreenSize);
+        });
     </script>
 </body>
 </html>

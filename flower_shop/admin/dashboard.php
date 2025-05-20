@@ -29,8 +29,8 @@ try {
     $unverifiedUsers = [];
 }
 try {
-    // Total Bunga
-    $stmt = $pdo->query("SELECT COUNT(*) FROM flowers");
+    // Hitung total bunga (ambil dari tabel products dengan kategori bunga)
+    $stmt = $pdo->query("SELECT COUNT(*) FROM products WHERE category = 'bunga'");
     $totalFlowers = $stmt->fetchColumn();
     
     // Total Komentar
@@ -88,9 +88,7 @@ if (empty($_SESSION['csrf_token'])) {
     <div class="sidebar">
         <div class="sidebar-header">
             
-            <h2><a href="dashboard.php" style="color: inherit; text-decoration: none;">
-        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-    </a></h2>
+            <h2><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></h2>
         </div>
         
         <div class="sidebar-menu">
@@ -142,7 +140,7 @@ if (empty($_SESSION['csrf_token'])) {
         <div class="data-card-container">
             <div class="data-card">
                 <h3><i class="fas fa-flower"></i> Total Bunga</h3>
-                <div class="count">125</div>
+                <div class="count"><?= $totalFlowers ?></div>
                 <a href="flowers.php">Lihat detail</a>
             </div>
             
