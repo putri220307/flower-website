@@ -8,19 +8,27 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+// Get and validate sort parameter
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'newest';
+$order = ($sort === 'oldest') ? 'ASC' : 'DESC';
+
+header("Content-Type: application/json");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
 try {
-    $stmt = $pdo->query("
+    // Query untuk mendapatkan aktivitas terbaru
+    $query = "
         (SELECT 
             id, 
             username, 
             created_at, 
-            'user_baru' AS type
+            'user_baru' AS type,
+            NULL AS flower_name
         FROM users 
-        ORDER BY created_at DESC 
-        LIMIT 10)
+        WHERE is_verified = 1
+        ORDER BY created_at $order 
+        LIMIT 5)
         
         UNION ALL
         
@@ -28,16 +36,24 @@ try {
             id, 
             admin_name AS username, 
             login_time AS created_at, 
-            'admin_login' AS type
+            'admin_login' AS type,
+            NULL AS flower_name
         FROM admin_logs 
-        ORDER BY login_time DESC 
-        LIMIT 10)
+        ORDER BY login_time $order 
+        LIMIT 5)
         
-        ORDER BY created_at DESC 
+        ORDER BY created_at $order
         LIMIT 10
-    ");
+    ";
     
-    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    $stmt = $pdo->query($query);
+    $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Debug output (bisa dihapus setelah testing)
+    error_log("Sort: $sort, Order: $order");
+    error_log("Activities fetched: " . count($activities));
+    
+    echo json_encode($activities);
     
 } catch (PDOException $e) {
     header('HTTP/1.1 500 Internal Server Error');

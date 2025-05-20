@@ -342,3 +342,338 @@ body {
         margin-left: 80px;
     }
 }
+
+/* Popup Detail */
+.details-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.details-popup h3 {
+    margin-top: 0;
+    color: var(--accent-color);
+}
+
+.details-popup .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.details-table th, .details-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.details-table th {
+    background-color: #f5f5f5;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: none;
+}
+
+.data-section-page {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative; /* Added for proper positioning */
+}
+
+.data-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.data-section-title {
+    color: var(--text-dark);
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0; /* Remove default margins */
+}
+
+.data-section-title i {
+    color: var(--accent-color);
+}
+
+/* Sort Controls - Improved */
+.sort-controls-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto; /* Push to the right */
+}
+
+.sort-label {
+    font-size: 14px;
+    color: var(--text-dark);
+    opacity: 0.7;
+}
+
+.sort-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.sort-btn {
+    padding: 6px 12px;
+    background: var(--main-bg);
+    border: 1px solid rgba(88, 76, 67, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+    color: var(--text-dark);
+}
+
+.sort-btn:hover {
+    background: rgba(88, 76, 67, 0.1);
+    border-color: rgba(88, 76, 67, 0.3);
+}
+
+.sort-btn.active {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.sort-btn i {
+    font-size: 12px;
+}
+
+/* Activity List */
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(88, 76, 67, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.activity-list li:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    color: var(--accent-color);
+    width: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.activity-text {
+    flex: 1;
+    color: var(--text-dark);
+}
+
+.activity-time {
+    font-size: 12px;
+    color: rgba(88, 76, 67, 0.6);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .data-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .sort-controls-container {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .sort-buttons {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+/* Flower Management Styles */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.data-table img {
+    max-height: 80px;
+    border-radius: 4px;
+}
+
+.no-image {
+    color: #999;
+    font-style: italic;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-edit {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+}
+
+.btn-edit:hover {
+    background-color: #3a5bc7;
+}
+
+.btn-delete {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.btn-primary {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #17a673;
+}
+
+.btn-back {
+    background-color: #6c757d;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+}
+
+.add-form, .edit-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+.add-form h3, .edit-form h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-group input[type="file"] {
+    width: 100%;
+}
+
+.current-image {
+    margin-bottom: 10px;
+}
+
+.current-image p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #666;
+}

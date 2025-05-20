@@ -1,4 +1,3 @@
-dashboard.php
 <?php
 session_start();
 require __DIR__.'/../config/database.php';
@@ -28,6 +27,27 @@ try {
 } catch (PDOException $e) {
     error_log("Error fetching unverified users: " . $e->getMessage());
     $unverifiedUsers = [];
+}
+try {
+    // Total Bunga
+    $stmt = $pdo->query("SELECT COUNT(*) FROM flowers");
+    $totalFlowers = $stmt->fetchColumn();
+    
+    // Total Komentar
+    $stmt = $pdo->query("SELECT COUNT(*) FROM comments");
+    $totalComments = $stmt->fetchColumn();
+    
+    // Total Pengguna
+    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE is_verified = 1");
+    $totalUsers = $stmt->fetchColumn();
+    
+    // Total Slider
+    $stmt = $pdo->query("SELECT COUNT(*) FROM sliders");
+    $totalSliders = $stmt->fetchColumn();
+    
+} catch (PDOException $e) {
+    error_log("Error fetching statistics: " . $e->getMessage());
+    $totalFlowers = $totalComments = $totalUsers = $totalSliders = 0;
 }
 
 // Handle verifikasi user
@@ -59,7 +79,9 @@ if (empty($_SESSION['csrf_token'])) {
     <title>Admin Dashboard - FLORAZZIU</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/admin.css">
+
+<!-- CSS Admin -->
+<link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -90,11 +112,6 @@ if (empty($_SESSION['csrf_token'])) {
             <div class="menu-item">
                 <i class="fas fa-users"></i> <span>Manajemen User</span>
             </div>
-            
-            <div class="menu-item">
-                <i class="fas fa-cog"></i> <span>Pengaturan</span>
-            </div>
-            
             <button class="logout-btn" onclick="window.location.href='logout.php'">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </button>
@@ -146,8 +163,18 @@ if (empty($_SESSION['csrf_token'])) {
             </div>
         </div>
         
-        <div class="data-section">
+        <div class="data-section-page">
+            <div class="section-header"></div>
             <h2><i class="fas fa-bell"></i> Aktivitas Terkini</h2>
+            <div class="sort-controls-container">
+            <span>Urutkan: </span>
+            <button id="sort-newest" class="sort-btn active" data-sort="newest">
+                <i class="fas fa-arrow-down"></i> Terbaru
+            </button>
+            <button id="sort-oldest" class="sort-btn" data-sort="oldest">
+                <i class="fas fa-arrow-up"></i> Terlama
+            </button>
+            </div>
             <ul class="data-list" id="recent-activities">
         <!-- Konten akan diisi oleh JavaScript -->
         <li>Memuat data aktivitas...</li>
@@ -225,162 +252,169 @@ if (empty($_SESSION['csrf_token'])) {
     <?php endif; ?>
 </div>
     
-    <script>
-        // Toggle submenu
-        function toggleSubmenu(id) {
-            const submenu = document.getElementById(id);
-            submenu.classList.toggle('show');
-        }
-        // Auto-refresh aktivitas komentar setiap 15 detik
-function refreshComments() {
-    fetch('../products/comments.php?latest=5')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('activity-feed').innerHTML = data;
-        });
-}
+<script>
+    // Toggle submenu
+    function toggleSubmenu(id) {
+        const submenu = document.getElementById(id);
+        submenu.classList.toggle('show');
+    }
 
-setInterval(refreshComments, 15000);
-        // Mobile responsive
-        function checkScreenSize() {
-            if (window.innerWidth <= 768) {
-                document.querySelector('.sidebar').classList.add('collapsed');
-            } else {
-                document.querySelector('.sidebar').classList.remove('collapsed');
-            }
+    // Mobile responsive
+    function checkScreenSize() {
+        if (window.innerWidth <= 768) {
+            document.querySelector('.sidebar').classList.add('collapsed');
+        } else {
+            document.querySelector('.sidebar').classList.remove('collapsed');
+        }
+    }
+
+    // Format waktu lebih akurat
+    function formatTimeAgo(date) {
+        const now = new Date();
+        const diff = (now - date) / 1000; // dalam detik
+        
+        if (diff < 60) return 'baru saja';
+        if (diff < 3600) return `${Math.floor(diff/60)} menit yang lalu`;
+        if (diff < 86400) return `${Math.floor(diff/3600)} jam yang lalu`;
+        return `${Math.floor(diff/86400)} hari yang lalu`;
+    }
+
+    // Global variable for current sort
+    let currentSort = 'newest'; // Default sort
+
+    // Main function to update recent activities
+    function updateRecentActivities() {
+        console.log('Fetching activities with sort:', currentSort); // Debug log
+        
+        fetch('fetch_recent_activities.php?sort=' + currentSort + '&t=' + new Date().getTime())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(activities => {
+                console.log('Received activities:', activities); // Debug log
+                const container = document.getElementById('recent-activities');
+                
+                if (!container) {
+                    console.error('Element with ID "recent-activities" not found!');
+                    return;
+                }
+                
+                container.innerHTML = ''; // Clear existing content
+                
+                if (activities.error) {
+                    container.innerHTML = `<li>${activities.error}</li>`;
+                    return;
+                }
+                
+                if (!activities || activities.length === 0) {
+                    container.innerHTML = '<li>Tidak ada aktivitas terbaru</li>';
+                    return;
+                }
+                
+                // Process each activity
+                activities.forEach(activity => {
+                    const li = document.createElement('li');
+                    let iconClass, activityText;
+                    
+                    // Set icon and text based on activity type
+                    switch(activity.type) {
+                        case 'user_baru':
+                            iconClass = 'fas fa-user-plus';
+                            activityText = `User <strong>${activity.username}</strong> terdaftar`;
+                            break;
+                        case 'admin_login':
+                            iconClass = 'fas fa-sign-in-alt';
+                            activityText = `Admin <strong>${activity.username}</strong> login`;
+                            break;
+                        case 'comment':
+                            iconClass = 'fas fa-comment';
+                            activityText = `Komentar baru pada bunga "${activity.flower_name}"`;
+                            break;
+                        default:
+                            iconClass = 'fas fa-info-circle';
+                            activityText = `Aktivitas sistem`;
+                    }
+                    
+                    li.innerHTML = `
+                        <i class="${iconClass}"></i> ${activityText}
+                        <span class="time-ago">(${formatTimeAgo(new Date(activity.created_at))})</span>
+                    `;
+                    container.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching activities:', error);
+                const container = document.getElementById('recent-activities');
+                if (container) {
+                    container.innerHTML = `<li>Gagal memuat aktivitas: ${error.message}</li>`;
+                }
+            });
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded'); // Debug log
+        
+        // Mobile responsive check
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        
+        // Set up sort buttons
+        const sortNewest = document.getElementById('sort-newest');
+        const sortOldest = document.getElementById('sort-oldest');
+        
+        if (sortNewest && sortOldest) {
+            console.log('Sort buttons found'); // Debug log
+            
+            sortNewest.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Newest button clicked'); // Debug log
+                
+                if (currentSort !== 'newest') {
+                    currentSort = 'newest';
+                    sortNewest.classList.add('active');
+                    sortOldest.classList.remove('active');
+                    updateRecentActivities();
+                }
+            });
+            
+            sortOldest.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Oldest button clicked'); // Debug log
+                
+                if (currentSort !== 'oldest') {
+                    currentSort = 'oldest';
+                    sortOldest.classList.add('active');
+                    sortNewest.classList.remove('active');
+                    updateRecentActivities();
+                }
+            });
+            
+            // Set initial active button
+            sortNewest.classList.add('active');
+        } else {
+            console.error('Sort buttons not found!'); // Debug log
         }
         
-        window.addEventListener('resize', checkScreenSize);
-        checkScreenSize();
-// Ubah interval update menjadi lebih cepat (contoh: 10 detik)
-function updateRecentActivities() {
-    fetch('fetch_recent_activities.php?t=' + new Date().getTime()) // Tambah timestamp untuk hindari cache
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(activities => {
-            const container = document.getElementById('recent-activities');
-            
-            if (activities.error) {
-                container.innerHTML = `<li>Error: ${activities.error}</li>`;
-                return;
-            }
-            
-            if (activities.length === 0) {
-                container.innerHTML = '<li>Tidak ada aktivitas terbaru</li>';
-                return;
-            }
-            
-            let html = '';
-            activities.forEach(activity => {
-                // Kirim timestamp asli ke client dan format di sisi client
-                const timestamp = new Date(activity.created_at).getTime();
-                
-                if (activity.type === 'user_baru') {
-                    html += `
-                        <li>
-                            <i class="fas fa-user-plus"></i> 
-                            User <b><strong>${activity.username}</strong></b> terdaftar 
-                            <span class="activity-time" data-timestamp="${timestamp}"></span>
-                        </li>
-                    `;
-                } else if (activity.type === 'admin_login') {
-                    html += `
-                        <li>
-                            <i class="fas fa-sign-in-alt"></i> 
-                            Admin <strong>${activity.username}</strong> login 
-                            <span class="activity-time" data-timestamp="${timestamp}"></span>
-                        </li>
-                    `;
-                }
-            });
-            
-            container.innerHTML = html;
-            updateActivityTimes(); // Panggil fungsi untuk update waktu
-        })
-        .catch(error => {
-            console.error('Error fetching activities:', error);
-            document.getElementById('recent-activities').innerHTML = 
-                `<li>Gagal memuat aktivitas: ${error.message}</li>`;
+        // Initial load of activities
+        updateRecentActivities();
+        
+        // Set up auto-refresh every 5 seconds
+        const refreshInterval = setInterval(updateRecentActivities, 5000);
+        
+        // Cleanup interval when page unloads
+        window.addEventListener('beforeunload', function() {
+            clearInterval(refreshInterval);
         });
-}
+    });
 
-// Fungsi untuk update waktu secara realtime di client
-// Fungsi untuk update aktivitas
-function updateRecentActivities() {
-    fetch('fetch_recent_activities.php?t=' + new Date().getTime())
-        .then(response => response.json())
-        .then(activities => {
-            const container = document.getElementById('recent-activities');
-            container.innerHTML = ''; // Kosongkan dulu
-            
-            if (activities.error) {
-                container.innerHTML = `<li>${activities.error}</li>`;
-                return;
-            }
-            
-            if (activities.length === 0) {
-                container.innerHTML = '<li>Tidak ada aktivitas terbaru</li>';
-                return;
-            }
-            
-            activities.forEach(activity => {
-                const li = document.createElement('li');
-                const icon = document.createElement('i');
-                icon.className = activity.type === 'user_baru' ? 
-                    'fas fa-user-plus' : 'fas fa-sign-in-alt';
-                
-                li.appendChild(icon);
-                
-                const text = activity.type === 'user_baru' ?
-                    ` User <strong>${activity.username}</strong> terdaftar` :
-                    ` Admin <strong>${activity.username}</strong> login`;
-                
-                li.innerHTML += text + ` <span class="time-ago">(${formatTimeAgo(new Date(activity.created_at))})</span>`;
-                
-                // Jika user baru, tambahkan di paling atas
-                if (activity.type === 'user_baru') {
-                    container.insertBefore(li, container.firstChild);
-                } else {
-                    container.appendChild(li);
-                }
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-
-// Format waktu lebih akurat
-function formatTimeAgo(date) {
-    const now = new Date();
-    const diff = (now - date) / 1000; // dalam detik
-    
-    if (diff < 60) return 'baru saja';
-    if (diff < 3600) return `${Math.floor(diff/60)} menit yang lalu`;
-    if (diff < 86400) return `${Math.floor(diff/3600)} jam yang lalu`;
-    return `${Math.floor(diff/86400)} hari yang lalu`;
-}
-
-// Update pertama kali
-updateRecentActivities();
-
-// Gunakan interval lebih pendek (5 detik)
-setInterval(updateRecentActivities, 5000);
-
-// Tambahkan event listener untuk update saat ada user baru
-document.addEventListener('DOMContentLoaded', function() {
-    const eventSource = new EventSource('realtime_activities.php');
-    
-    eventSource.onmessage = function(e) {
-        if (e.data === 'new_activity') {
-            updateRecentActivities(); // Langsung update ketika ada aktivitas baru
-        }
-    };
-});
-
-    </script>
+    // Function to handle user verification (if needed)
+    function verifyUser(userId) {
+        console.log('Verifying user:', userId);
+        // You would typically make a fetch request here
+    }
+</script>
 
 </body>
 </html>

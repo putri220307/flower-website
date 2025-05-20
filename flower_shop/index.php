@@ -74,7 +74,7 @@
             
             if (count($products) > 0): 
                 foreach ($products as $product): ?>
-                    <div class="product-card-page">
+                    <div class="product-card-page fade-in-up">
                         <div class="product-image-container">
                             <img src="assets/images/products/<?php echo htmlspecialchars($product['image']); ?>" 
                                  alt="<?php echo htmlspecialchars($product['name']); ?>">
@@ -121,6 +121,20 @@
     background-color: #FDFCE8;
 }
 
+/* Efek fade-in dari bawah */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-up.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
 </style>
 <script>
     let currentIndex = 0;
@@ -149,6 +163,23 @@
             showSlide(currentIndex);
         });
     });
+    // --- SCROLL ANIMATION (looping version) ---
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+        } else {
+            entry.target.classList.remove('show'); // Hapus saat keluar dari layar
+        }
+    });
+}, {
+    threshold: 0.1
+});
+
+document.querySelectorAll('.fade-in-up').forEach(el => {
+    observer.observe(el);
+});
+
 
     // Inisialisasi awal
     showSlide(currentIndex);
