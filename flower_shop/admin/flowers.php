@@ -34,17 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle image upload
         $imagePath = '';
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = '../uploads/admin/flowers/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-            
-            $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $filename = uniqid() . '.' . $extension;
-            $destination = $uploadDir . $filename;
-            
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-                $imagePath = '/uploads/admin/flowers/' . $filename;
+            $uploadDir = '../assets/images/products/'; // Ubah path upload
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0755, true);
+}
+
+$extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+$filename = uniqid() . '.' . $extension;
+$destination = $uploadDir . $filename;
+
+if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+    $imagePath = 'assets/images/products/' . $filename; 
             } else {
                 $error = "Gagal mengupload gambar";
             }
@@ -135,10 +135,9 @@ try {
                     <i class="fas fa-comments"></i> <span>Data Komentar</span>
                 </a>
             </div>
-            
-            <div class="menu-item">
-                <i class="fas fa-users"></i> <span>Manajemen User</span>
-            </div>
+            <a href="users.php" class="menu-item">
+    <i class="fas fa-users"></i> <span>Manajemen User</span>
+</a>
             <button class="logout-btn" onclick="window.location.href='logout.php'">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </button>
@@ -175,8 +174,8 @@ try {
                         <tr>
                             <th>No</th>
                             <th>Nama Bunga</th>
+                            <th>Warna</th>
                             <th>Deskripsi</th>
-                             <th>Warna</th>
                             <th>Gambar</th>
                             <th>Aksi</th>
                         </tr>
@@ -200,7 +199,7 @@ try {
                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <a href="edit_flower.php?id=<?= $flower['id'] ?>" class="btn btn-edit">
+                                     <a href="edit_flowers.php?id=<?= $flower['id'] ?>" class="btn btn-edit">
                                         <i class="fas fa-edit"></i> 
                                     </a>
                                     <form method="POST" style="display: inline;">

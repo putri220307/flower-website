@@ -2,11 +2,21 @@
 session_start();
 require __DIR__.'/../config/database.php';
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Security check
 if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit;
 }
+
+// Available colors
+$availableColors = [
+    'biru', 'ungu', 'pink', 'putih', 
+    'merah', 'kuning', 'hijau', 'hitam'
+];
 
 // Get flower ID
 $id = $_GET['id'] ?? null;
@@ -15,9 +25,9 @@ if (!$id) {
     exit;
 }
 
-// Get flower data
+// Get flower data - USING THE CORRECT TABLE (products with category filter)
 try {
-    $stmt = $pdo->prepare("SELECT * FROM flowers WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ? AND category = 'bunga'");
     $stmt->execute([$id]);
     $flower = $stmt->fetch();
     
@@ -34,7 +44,13 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];
+    $color = $_POST['color'] ?? $flower['color'];
     $currentImage = $flower['image_path'];
+    
+    // Validate color
+    if (!in_array($color, $availableColors)) {
+        $error = "Warna yang dipilih tidak valid";
+    }
     
     // Handle image upload if new image provided
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
@@ -43,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             unlink('../' . $currentImage);
         }
         
-        // Upload new image
-        $uploadDir = '../uploads/flowers/';
+        // Upload new image - consistent path with flowers.php
+        $uploadDir = '../uploads/admin/flowers/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -54,17 +70,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destination = $uploadDir . $filename;
         
         if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-            $currentImage = 'uploads/flowers/' . $filename;
+            $currentImage = '/uploads/admin/flowers/' . $filename;
+        } else {
+            $error = "Gagal mengupload gambar";
         }
     }
     
-    try {
-        $stmt = $pdo->prepare("UPDATE flowers SET name = ?, description = ?, image_path = ? WHERE id = ?");
-        $stmt->execute([$name, $description, $currentImage, $id]);
-        header("Location: flowers.php?success=1");
-        exit;
-    } catch (PDOException $e) {
-        $error = "Gagal memperbarui bunga: " . $e->getMessage();
+    if (empty($error)) {
+        try {
+            // Update all fields including color
+            $stmt = $pdo->prepare("UPDATE products SET name = ?, description = ?, image_path = ?, color = ? WHERE id = ?");
+            $stmt->execute([$name, $description, $currentImage, $color, $id]);
+            header("Location: flowers.php?success=1");
+            exit;
+        } catch (PDOException $e) {
+            $error = "Gagal memperbarui bunga: " . $e->getMessage();
+        }
     }
 }
 ?>
@@ -82,7 +103,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- ... (same sidebar content) ... -->
+        <div class="sidebar-header">
+            <a href="dashboard.php" class="dashboard-link">
+                <h2><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></h2>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-title">Data Master</div>
+            
+            <div class="menu-item" onclick="toggleSubmenu('data-master')">
+                <i class="fas fa-database"></i> <span>Data Master</span>
+            </div>
+            <div class="submenu" id="data-master">
+                <a href="flowers.php" class="submenu-item">
+                    <i class="fas fa-flower"></i> <span>Data Bunga</span>
+                </a>
+                <a href="sliders.php" class="submenu-item">
+                    <i class="fas fa-images"></i> <span>Data Slider</span>
+                </a>
+                <a href="comments.php" class="submenu-item">
+                    <i class="fas fa-comments"></i> <span>Data Komentar</span>
+                </a>
+            </div>
+        </div>
     </div>
     
     <!-- Main Content -->
@@ -114,6 +158,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="description">Deskripsi</label>
                     <textarea id="description" name="description" rows="3" required><?= htmlspecialchars($flower['description']) ?></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color">Warna Bunga</label>
+                    <select id="color" name="color" required>
+                        <option value="">Pilih Warna</option>
+                        <option value="biru" <?= $flower['color'] === 'biru' ? 'selected' : '' ?>>Biru</option>
+                        <option value="ungu" <?= $flower['color'] === 'ungu' ? 'selected' : '' ?>>Ungu</option>
+                        <option value="pink" <?= $flower['color'] === 'pink' ? 'selected' : '' ?>>Pink</option>
+                        <option value="putih" <?= $flower['color'] === 'putih' ? 'selected' : '' ?>>Putih</option>
+                        <option value="merah" <?= $flower['color'] === 'merah' ? 'selected' : '' ?>>Merah</option>
+                        <option value="kuning" <?= $flower['color'] === 'kuning' ? 'selected' : '' ?>>Kuning</option>
+                        <option value="hijau" <?= $flower['color'] === 'hijau' ? 'selected' : '' ?>>Hijau</option>
+                        <option value="hitam" <?= $flower['color'] === 'hitam' ? 'selected' : '' ?>>Hitam</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">

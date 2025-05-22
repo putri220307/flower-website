@@ -52,21 +52,6 @@ function formatProductDescription($description) {
     }
     return $formatted;
 }
-
-// Fungsi untuk kode warna
-function getColorCode($colorName) {
-    $colors = [
-        'merah' => '#e74c3c',
-        'biru' => '#3498db',
-        'hijau' => '#2ecc71',
-        'kuning' => '#f1c40f',
-        'ungu' => '#9b59b6',
-        'hitam' => '#2c3e50',
-        'putih' => '#ecf0f1',
-        'pink' => '#fd79a8'
-    ];
-    return $colors[strtolower($colorName)] ?? '#333';
-}
 ?>
 
 <main>

@@ -26,6 +26,10 @@ include __DIR__ . '/functions.php';
             <img src="/assets/images/logo.png" alt="Flower Shop Logo" width="155" height="83">
         </div>
 
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <div class="search-box">
             <form action="../search.php" method="get">
                 <input type="text" name="query" placeholder="Search.." value="<?= htmlspecialchars($_GET['query'] ?? '') ?>">
@@ -33,30 +37,47 @@ include __DIR__ . '/functions.php';
             </form>
         </div>
 
-        <div class="user-area">
+        <div class="user-area" id="userArea">
             <a href="../about-us.php" class="icon-btn">
                 <i class="fas fa-exclamation-circle"></i>
             </a>
             <div class="divider"></div>
             <span class="username">User</span>
             <div class="user-actions">
-    <?php if(isset($_SESSION['loggedin'])): ?>
-        <div class="profile-dropdown">
-            <div class="profile-toggle">
-                <img src="../assets/uploads/<?= $_SESSION['profile_pic'] ?? 'default.jpg' ?>" alt="Profile">
-                <span><?= htmlspecialchars($_SESSION['username']) ?></span>
-                <i class="fas fa-chevron-down"></i>
+                <?php if(isset($_SESSION['loggedin'])): ?>
+                    <div class="profile-dropdown">
+                        <div class="profile-toggle">
+                            <img src="../assets/uploads/<?= $_SESSION['profile_pic'] ?? 'default.jpg' ?>" alt="Profile">
+                            <span><?= htmlspecialchars($_SESSION['username']) ?></span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <ul class="dropdown-menu">
+                            <li><a href="../users/profile.php"><i class="fas fa-user"></i> My Profile</a></li>
+                            <li><a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                <?php else: ?>
+                    <a href="../auth/login.php" class="login-btn">Login</a>
+                <?php endif; ?>
             </div>
-            <ul class="dropdown-menu">
-                <li><a href="../users/profile.php"><i class="fas fa-user"></i> My Profile</a></li>
-                <li><a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-            </ul>
-        </div>
-    <?php else: ?>
-        <a href="../auth/login.php" class="login-btn">Login</a>
-    <?php endif; ?>
-</div>
         </div>
     </div>
 </header>
 <?php endif; ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const userArea = document.getElementById('userArea');
+        
+        mobileMenuToggle.addEventListener('click', function() {
+            userArea.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#userArea') && !e.target.closest('#mobileMenuToggle')) {
+                userArea.classList.remove('active');
+            }
+        });
+    });
+</script>

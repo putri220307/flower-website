@@ -30,20 +30,17 @@ try {
 }
 try {
     // Hitung total bunga (ambil dari tabel products dengan kategori bunga)
-    $stmt = $pdo->query("SELECT COUNT(*) FROM products WHERE category = 'bunga'");
-    $totalFlowers = $stmt->fetchColumn();
-    
-    // Total Komentar
-    $stmt = $pdo->query("SELECT COUNT(*) FROM comments");
-    $totalComments = $stmt->fetchColumn();
-    
-    // Total Pengguna
-    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE is_verified = 1");
-    $totalUsers = $stmt->fetchColumn();
-    
-    // Total Slider
-    $stmt = $pdo->query("SELECT COUNT(*) FROM sliders");
-    $totalSliders = $stmt->fetchColumn();
+   $stmt = $pdo->query("SELECT COUNT(*) FROM products WHERE category = 'bunga'");
+$totalFlowers = $stmt->fetchColumn();
+
+$stmt = $pdo->query("SELECT COUNT(*) FROM comments");
+$totalComments = $stmt->fetchColumn();
+
+$stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE is_verified = 1");
+$totalUsers = $stmt->fetchColumn();
+
+$stmt = $pdo->query("SELECT COUNT(*) FROM sliders");
+$totalSliders = $stmt->fetchColumn();
     
 } catch (PDOException $e) {
     error_log("Error fetching statistics: " . $e->getMessage());
@@ -109,9 +106,9 @@ if (empty($_SESSION['csrf_token'])) {
                 </a>
             </div>
             
-            <div class="menu-item">
-                <i class="fas fa-users"></i> <span>Manajemen User</span>
-            </div>
+<a href="users.php" class="menu-item">
+    <i class="fas fa-users"></i> <span>Manajemen User</span>
+</a>
             <button class="logout-btn" onclick="window.location.href='logout.php'">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </button>
@@ -140,25 +137,25 @@ if (empty($_SESSION['csrf_token'])) {
         <div class="data-card-container">
             <div class="data-card">
                 <h3><i class="fas fa-flower"></i> Total Bunga</h3>
-                <div class="count"><?= $totalFlowers ?></div>
+                <div class="count"><?= htmlspecialchars($totalFlowers) ?></div>
                 <a href="flowers.php">Lihat detail</a>
             </div>
             
             <div class="data-card">
                 <h3><i class="fas fa-comments"></i> Komentar</h3>
-                <div class="count">42</div>
+                <div class="count"><?= htmlspecialchars($totalComments) ?></div>
                 <a href="comments.php">Lihat detail</a>
             </div>
             
             <div class="data-card">
                 <h3><i class="fas fa-users"></i> Pengguna</h3>
-                <div class="count">78</div>
+                <div class="count"><?= htmlspecialchars($totalUsers) ?></div>
                 <a href="users.php">Lihat detail</a>
             </div>
             
             <div class="data-card">
                 <h3><i class="fas fa-images"></i> Slider</h3>
-                <div class="count">5</div>
+                <div class="count"><?= htmlspecialchars($totalSliders) ?></div>
                 <a href="sliders.php">Lihat detail</a>
             </div>
         </div>
