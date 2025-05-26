@@ -108,6 +108,9 @@ try {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
+    <style>
+       
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -136,8 +139,8 @@ try {
                 </a>
             </div>
             <a href="users.php" class="menu-item">
-    <i class="fas fa-users"></i> <span>Manajemen User</span>
-</a>
+                <i class="fas fa-users"></i> <span>Manajemen User</span>
+            </a>
             <button class="logout-btn" onclick="window.location.href='logout.php'">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </button>
@@ -166,6 +169,12 @@ try {
         <?php endif; ?>
         
         <div class="data-section">
+            <!-- Tombol untuk membuka modal -->
+            <button class="add-btn" onclick="openModal()">
+                <i class="fas fa-plus"></i> Tambah Bunga
+            </button>
+            
+            <!-- Daftar Bunga -->
             <h2><i class="fas fa-flower"></i> Daftar Bunga</h2>
             
             <div class="table-responsive">
@@ -182,24 +191,24 @@ try {
                     </thead>
                     <tbody>
                         <?php foreach ($flowers as $index => $flower): ?>
-            <tr>
-                <td><?= $index + 1 ?></td>
-                <td><?= htmlspecialchars($flower['name']) ?></td>
-                <td>
-                    <span class="color-badge" style="background-color: <?= htmlspecialchars($flower['color']) ?>">
-                        <?= ucfirst(htmlspecialchars($flower['color'])) ?>
-                    </span>
-                </td>
-                <td><?= htmlspecialchars($flower['description']) ?></td>
-                <td>
-                    <?php if ($flower['image_path']): ?>
-                        <img src="../<?= htmlspecialchars($flower['image_path']) ?>" alt="<?= htmlspecialchars($flower['name']) ?>" width="80">
-                    <?php else: ?>
-                        <span class="no-image">No Image</span>
-                    <?php endif; ?>
+                            <tr>
+                                <td><?= $index + 1 ?></td>
+                                <td><?= htmlspecialchars($flower['name']) ?></td>
+                                <td>
+                                    <span class="color-badge" style="background-color: <?= htmlspecialchars($flower['color']) ?>">
+                                        <?= ucfirst(htmlspecialchars($flower['color'])) ?>
+                                    </span>
+                                </td>
+                                <td><?= htmlspecialchars($flower['description']) ?></td>
+                                <td>
+                                    <?php if ($flower['image_path']): ?>
+                                        <img src="../<?= htmlspecialchars($flower['image_path']) ?>" alt="<?= htmlspecialchars($flower['name']) ?>" width="80">
+                                    <?php else: ?>
+                                        <span class="no-image">No Image</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
-                                     <a href="edit_flowers.php?id=<?= $flower['id'] ?>" class="btn btn-edit">
+                                    <a href="edit_flowers.php?id=<?= $flower['id'] ?>" class="btn btn-edit">
                                         <i class="fas fa-edit"></i> 
                                     </a>
                                     <form method="POST" style="display: inline;">
@@ -214,43 +223,55 @@ try {
                     </tbody>
                 </table>
             </div>
-            
-            <div class="add-form">
-                <h3><i class="fas fa-plus"></i> Tambah Data Bunga</h3>
-                <form method="POST" enctype="multipart/form-data">
+        </div>
+    </div>
+    
+    <!-- Modal Form Tambah Bunga -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2><i class="fas fa-plus"></i> Tambah Data Bunga</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-row">
                     <div class="form-group">
                         <label for="name">Nama Bunga</label>
                         <input type="text" id="name" name="name" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="description">Deskripsi</label>
-                        <textarea id="description" name="description" rows="3" required></textarea>
+                        <label for="color">Warna Bunga</label>
+                        <select id="color" name="color" required>
+                            <option value="">Pilih Warna</option>
+                            <option value="biru">Biru</option>
+                            <option value="ungu">Ungu</option>
+                            <option value="pink">Pink</option>
+                            <option value="putih">Putih</option>
+                            <option value="merah">Merah</option>
+                            <option value="kuning">Kuning</option>
+                            <option value="hijau">Hijau</option>
+                            <option value="hitam">Hitam</option>
+                        </select>
                     </div>
-                    <div class="form-group">
-            <label for="color">Warna Bunga</label>
-            <select id="color" name="color" required>
-                <option value="">Pilih Warna</option>
-                <option value="biru">Biru</option>
-                <option value="ungu">Ungu</option>
-                <option value="pink">Pink</option>
-                <option value="putih">Putih</option>
-                <option value="merah">Merah</option>
-                <option value="kuning">Kuning</option>
-                <option value="hijau">Hijau</option>
-                <option value="hitam">Hitam</option>
-            </select>
-        </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Deskripsi</label>
+                    <textarea id="description" name="description" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label for="image">Gambar Bunga</label>
                         <input type="file" id="image" name="image" accept="image/*">
                     </div>
-                    
+                </div>
+                
+                <div class="form-group">
                     <button type="submit" name="add_flower" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Simpan
+                        <i class="fas fa-save"></i> Simpan Data
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
     
@@ -267,6 +288,23 @@ try {
                 document.querySelector('.sidebar').classList.add('collapsed');
             } else {
                 document.querySelector('.sidebar').classList.remove('collapsed');
+            }
+        }
+
+        // Fungsi untuk modal
+        function openModal() {
+            document.getElementById('addModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+        
+        // Tutup modal jika klik di luar area modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('addModal');
+            if (event.target == modal) {
+                closeModal();
             }
         }
 

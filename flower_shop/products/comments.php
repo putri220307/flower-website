@@ -15,6 +15,20 @@ if (!$product) {
     exit;
 }
 
+// Handle delete comment
+if (isset($_POST['delete_comment'])) {
+    $comment_id = $_POST['comment_id'];
+    $user_id = $_SESSION['user_id'] ?? 0;
+    
+    // Verify user owns the comment before deleting
+    $stmt = $pdo->prepare("DELETE FROM comments WHERE id = ? AND user_id = ?");
+    $stmt->execute([$comment_id, $user_id]);
+    
+    // Refresh page
+    header("Location: comments.php?id=" . $product_id);
+    exit;
+}
+
 // Query untuk mendapatkan komentar
 $sort = $_GET['sort'] ?? 'newest';
 $orderBy = match($sort) {
@@ -35,7 +49,62 @@ $stmt = $pdo->prepare("
 $stmt->execute([$product_id]);
 $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+<style>
+    /* Comment Actions Dropdown */
+.comment-actions {
+    position: relative;
+    margin-left: auto;
+}
 
+.dots-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #666;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.dropdown-content a, .dropdown-content button {
+    color: black;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.dropdown-content a:hover, .dropdown-content button:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.delete-btn {
+    color: #ff4444 !important;
+}
+</style>
 <main>
     <div class="container">
         <h1 class="comments-title">Comment</h1> <!-- Judul diubah menjadi umum -->
@@ -62,6 +131,22 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="comment-user"><?= htmlspecialchars($comment['username']) ?></div>
                         <div class="comment-text"><?= htmlspecialchars($comment['comment']) ?></div>
                         <div class="comment-date"><?= date('d M Y', strtotime($comment['created_at'])) ?></div>
+                        
+                        <!-- Three-dot menu for comment actions -->
+                        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $comment['user_id']): ?>
+                            <div class="comment-actions">
+                                <div class="dropdown">
+                                    <button class="dots-btn">⋮</button>
+                                    <div class="dropdown-content">
+                                        <a href="edit-comment.php?id=<?= $comment['id'] ?>&product_id=<?= $product_id ?>">Edit</a>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="comment_id" value="<?= $comment['id'] ?>">
+                                            <button type="submit" name="delete_comment" class="delete-btn">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>

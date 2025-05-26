@@ -845,10 +845,6 @@
     text-decoration: none;
     transition: all 0.3s;
 }
-
-.login-btn:hover {
-    background: #4a382b;
-}
     .form-group label {
         display: block;
         margin-bottom: 8px;
@@ -1113,3 +1109,4 @@
         order: 4;
     }
 }
+

@@ -12,12 +12,12 @@ if (empty($searchQuery)) {
 }
 
 // Gunakan LIKE untuk kompatibilitas yang lebih baik
+// Correct version - single parameter
 $stmt = $pdo->prepare("SELECT * FROM products 
     WHERE name LIKE CONCAT('%', ?, '%') 
-    OR description LIKE CONCAT('%', ?, '%')
     ORDER BY name ASC");
 
-$stmt->execute([$searchQuery, $searchQuery]);
+$stmt->execute([$searchQuery]);
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
