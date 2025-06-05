@@ -53,7 +53,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     /* Comment Actions Dropdown */
 .comment-actions {
     position: relative;
-    margin-left: auto;
+    margin: auto;
 }
 
 .dots-btn {

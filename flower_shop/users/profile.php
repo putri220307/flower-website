@@ -160,6 +160,7 @@ if (!isset($_SESSION['created_at']) && isset($user['created_at'])) {
         }
 
         .btn-primary {
+            margin-top: 10px;
             background-color: #4E73DE;
             color: white;
         }

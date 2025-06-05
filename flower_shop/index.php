@@ -120,15 +120,16 @@ $sql = "SELECT id, name, description, image_path, color FROM products";
 
 <style>
   .container-page {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
+            margin-top: 30px;
         }
 
         /* Compact Slider Styles */
         .slider {
             position: relative;
-            width: 100%; /* Setengah lebar container */
+            max-width: 1400px;/* Setengah lebar container */
             margin: 0 auto 30px;
             border-radius: 12px;
             overflow: hidden;
@@ -197,6 +198,7 @@ $sql = "SELECT id, name, description, image_path, color FROM products";
 
         /* Your existing product styles */
         .products {
+            max-width: 1400px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -221,8 +223,8 @@ $sql = "SELECT id, name, description, image_path, color FROM products";
             opacity: 1;
             transform: translateY(0);
         }
-
 </style>
+
 <script>
     let currentIndex = 0;
     const slides = document.querySelectorAll('.slides .slide');

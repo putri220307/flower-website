@@ -17,8 +17,8 @@ include __DIR__ . '/functions.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-<body>
 
+<body>
 <?php if (!isset($hideHeader) || $hideHeader !== true): ?>
 <header class="main-header">
     <div class="container header-flex">
@@ -52,8 +52,8 @@ include __DIR__ . '/functions.php';
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <ul class="dropdown-menu">
-                            <li><a href="../users/profile.php"><i class="fas fa-user"></i> My Profile</a></li>
-                            <li><a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <a href="../users/profile.php"><i class="fas fa-user"></i> My Profile</a>
+                            <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </ul>
                     </div>
                 <?php else: ?>

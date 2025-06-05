@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label>Password</label>
                         <input type="password" name="password" required>
                     </div>
-                    <button type="submit" class="register-btn">Daftar</button>
+
                 </form>
             <?php endif; ?>
         </div>
