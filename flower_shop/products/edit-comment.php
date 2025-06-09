@@ -2,30 +2,35 @@
 include '../includes/header.php';
 require '../config/database.php';
 
-
 $comment_id = $_GET['id'] ?? 0;
-$product_id = $_GET['product_id'] ?? 0;
 
-// Get the comment data
+// Ambil data komentar dari database.
+// Ini juga akan mengambil product_id yang terkait dengan komentar tersebut.
 $stmt = $pdo->prepare("SELECT * FROM comments WHERE id = ? AND user_id = ?");
 $stmt->execute([$comment_id, $_SESSION['user_id']]);
 $comment = $stmt->fetch(PDO::FETCH_ASSOC);
-
 if (!$comment) {
-    header("Location: comments.php?id=" . $product_id);
+    header("Location: index.php"); 
     exit;
 }
+$product_id = $comment['product_id'];
 
-// Handle form submission
+// Tangani pengiriman form
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_comment = $_POST['comment'] ?? '';
     
     if (!empty($new_comment)) {
-        $stmt = $pdo->prepare("UPDATE comments SET comment = ? WHERE id = ?");
-        $stmt->execute([$new_comment, $comment_id]);
+        // Lakukan sanitasi input untuk keamanan
+        $sanitized_comment = htmlspecialchars(strip_tags($new_comment));
+
+        // Update komentar di database
+        $stmt = $pdo->prepare("UPDATE comments SET comment = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$sanitized_comment, $comment_id]);
         
+        // *** BAGIAN PENTING UNTUK PENGALIHAN SETELAH SAVE ***
+        // Redirect kembali ke halaman komentar setelah berhasil disimpan
         header("Location: comments.php?id=" . $product_id);
-        exit;
+        exit; // Sangat penting untuk menghentikan eksekusi script setelah header
     }
 }
 ?>

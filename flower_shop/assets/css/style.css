@@ -315,6 +315,7 @@
     display: inline-block;
 }
 
+
 .filter-btn {
     background-color: #E2CEB1;
     color: #584C43;
@@ -631,6 +632,27 @@
         margin: auto;
         position: relative;
     }
+    .form-actions a,
+.form-actions button {
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none; /* Penting untuk tautan (a) */
+    display: inline-block; /* Penting agar padding dan margin bekerja seperti blok */
+}
+
+.save-btn {
+    background-color: #007bff; /* Contoh warna biru, Anda bisa sesuaikan */
+}
+.form-actions a:hover,
+.form-actions button:hover {
+    opacity: 0.9; /* Sedikit transparansi saat dihover */
+}
 
     .back-btn,
     .cancel-btn {
