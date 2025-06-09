@@ -95,20 +95,27 @@ if (empty($_SESSION['csrf_token'])) {
             background: #f9f9f9;
         }
         
-        .btn-edit {
+        .btn-edit,.btn-delete {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px; /* beri jarak antara ikon dan teks */
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        }
+
+
+        .btn-edit {            
             background: #4e73df;
             color: white;
-            padding: 5px 15px;
-            border-radius: 4px;
-            text-decoration: none;
         }
         
-        .btn-delete {
+        .btn-delete {            
             background: #e74a3b;
             color: white;
             border: none;
-            padding: 5px 15px;
-            border-radius: 4px;
             cursor: pointer;
         }
         

@@ -1,3 +1,5 @@
+
+
 <?php 
 include '../includes/header.php';
 require '../config/database.php';
@@ -56,6 +58,7 @@ function formatProductDescription($description) {
 
 <main>
     <div class="container">
+        <div class="product-detail-page-wrapper">
         <div class="product-detail-card-page">
             <h1 class="detail-title">Details</h1>
             
@@ -77,12 +80,13 @@ function formatProductDescription($description) {
                     
                     <div class="product-actions-container">
                         <div class="product-actions-page">
-                            <a href="comments.php?id=<?php echo $product['id']; ?>" class="comment-btn">Comment</a>
-                            <a href="../index.php" class="back-btn">Back</a>
+                            <a href="comments.php?id=<?php echo $product['id']; ?>" class="btn comment-btn">Comment</a>
+                            <a href="../index.php" class="btn back-btn">Back</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        </div>
+    </div>
 </main>

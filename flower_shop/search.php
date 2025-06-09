@@ -77,17 +77,23 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     .products {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 30px;
-        margin: 40px 0;
-        padding: 0 10px;
-    }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 40px auto; /* Otomatis tengah vertikal dan horizontal */
+    max-width: 1200px;
+    padding: 0 15px;
+    justify-items: center; /* Ini penting untuk menempatkan .product-card di tengah setiap kolom */
+}
     
     .product-card {
-        background: #FDFCE8;
-        border-radius: 12px;
+        width: 300px;
+        height: 350px;
+        background: FDFCE8;
+        border-radius: 10px;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
         transition: all 0.3s ease;
     }
     
@@ -96,21 +102,16 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     .product-image-container {
-        height: 250px;
+        width: 300px;
+        height: 350px;
+        border-radius: 10px;
         overflow: hidden;
-        position: relative;
-        background: #f8f8f8;
     }
     
     .product-image-container img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    
-    .product-card:hover .product-image-container img {
-        transform: scale(1.08);
     }
     
     .product-name {
@@ -127,7 +128,23 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     .product-actions {
-        padding: 0 20px 20px;
+        display: flex;
+        gap: 20px;
+        margin-top: 40px;
+    }
+
+    .product-actions-container {
+        display: flex;
+        justify-content: flex-end;
+        position: absolute; /* Ubah ke absolute */
+        bottom: 30px; /* Atur jarak dari bawah */
+        right: 40px; /* Atur jarak dari kanan */
+        width: calc(100% - 80px); /* Sesuaikan dengan padding */
+    }
+    
+    .product-actions-page {
+        display: flex;
+        gap: 15px; /* Gap lebih kecil dari sebelumnya */
     }
     
     .view-btn {

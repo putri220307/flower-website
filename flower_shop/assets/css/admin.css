@@ -599,7 +599,7 @@ body {
 }
 
 .data-table img {
-    max-height: 80px;
+    max-height: 100px;
     border-radius: 4px;
 }
 
@@ -608,21 +608,30 @@ body {
     font-style: italic;
 }
 
+.btn i {
+    font-size: 16px;
+}
+
 .btn {
-    padding: 8px 12px;
+    padding: 8px 16px; /* Lebar tombol lebih konsisten */
     border-radius: 4px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+    min-width: 55px; /* Menjaga tombol minimal sama lebar */
     text-decoration: none;
     transition: all 0.3s;
+    border: none;
+    margin: 2px;
 }
 
 .btn-edit {
     background-color: var(--accent-color);
     color: white;
-    border: none;
 }
 
 .btn-edit:hover {
@@ -632,7 +641,6 @@ body {
 .btn-delete {
     background-color: var(--danger-color);
     color: white;
-    border: none;
 }
 
 .btn-delete:hover {

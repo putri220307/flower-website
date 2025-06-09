@@ -36,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <main>
-    <div class="container">
+    <div class="edit-comment-container">
         <h1>Edit Comment</h1>
         
-        <form method="POST">
+        <form method="POST" class="comment-form">
             <div class="form-group">
                 <textarea name="comment" required><?= htmlspecialchars($comment['comment']) ?></textarea>
             </div>

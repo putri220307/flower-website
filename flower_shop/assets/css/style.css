@@ -377,16 +377,28 @@
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     }
-    .product-detail-card-page {
+    .product-detail-card-page { /* Menggunakan nama kelas yang Anda berikan di HTML */
         background-color: #E2CEB1;
-        width: 1300px;
-        margin: 50px auto;
-        padding: 40px;
+        width: 95%; /* *PENTING*: Gunakan persentase untuk lebar agar responsif */
+        max-width: 1300px; /* Batasi lebar maksimal untuk tampilan desktop yang besar */
+        margin: 50px auto 0 auto; /* Margin atas dan bawah otomatis, tanpa margin bawah yang terlalu besar agar tombol tidak terdorong */
+        padding: 40px; /* Padding default untuk desktop */
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        position: relative; /* Diperlukan untuk positioning absolute child */
-        min-height: 600px; /* Pastikan ada ruang untuk tombol di bawah */
-        padding-bottom: 100px; /* Ruang ekstra di bagian bawah */
+        box-sizing: border-box; /* Sangat penting untuk padding agar tidak menambah lebar total */
+        position: relative; /* Diperlukan untuk positioning absolute child (tombol aksi) */
+        min-height: 500px; /* Pastikan ada ruang minimum agar kartu tidak terlalu pendek */
+        padding-bottom: 100px; /* Ruang ekstra di bagian bawah untuk tombol aksi yang absolut */
+    }
+
+    .product-detail-page-wrapper {
+        background-color: #FDFCE8; /* Latar belakang halaman secara keseluruhan */
+        min-height: 100vh; /* Memastikan halaman setidaknya setinggi viewport */
+        padding: 30px 20px; /* Padding global untuk ruang di tepi layar pada desktop */
+        display: flex;
+        justify-content: center; /* Memusatkan card detail produk secara horizontal */
+        align-items: flex-start; /* Sejajarkan konten ke atas agar tidak terlalu banyak ruang kosong di atas */
+        box-sizing: border-box; /* Pastikan padding termasuk dalam perhitungan total dimensi */
     }
 
     .detail-title {
@@ -394,24 +406,27 @@
         font-size: 36px;
         font-weight: 700;
         margin-bottom: 40px;
-        text-align: left;
+        text-align: left; /* Default rata kiri */
+        word-break: break-word; /* Mencegah teks terlalu panjang keluar dari batas */
     }
 
-    .product-detail-content {
+    .product-detail-content {    
         display: flex;
-        gap: 60px;
-        margin-bottom: 20px; /* Tambahkan margin bawah */
+        gap: 60px; /* Jarak antar kolom (gambar dan info) */
+        margin-bottom: 30px; /* Margin bawah dari konten utama */
+        flex-wrap: nowrap; /* Mencegah wrap secara default di desktop, akan diubah di mobile */
+
     }
 
     .products {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin: 40px auto; /* Otomatis tengah vertikal dan horizontal */
-    max-width: 1200px;
-    padding: 0 15px;
-    justify-items: center; /* Ini penting untuk menempatkan .product-card di tengah setiap kolom */
-}
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin: 40px auto; /* Otomatis tengah vertikal dan horizontal */
+        max-width: 1200px;
+        padding: 0 15px;
+        justify-items: center; /* Ini penting untuk menempatkan .product-card di tengah setiap kolom */
+    }
 
     .product-card {
         width: 300px;
@@ -427,31 +442,65 @@
     .product-image-container {
         width: 300px;
         height: 350px;
-        border-radius: 10px;
+        border-radius: 10px;.product-image-container {
+            width: 300px;
+            height: 350px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
         overflow: hidden;
     }
 
     .product-image-container img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: cover; /* Pastikan gambar mengisi kontainer tanpa distorsi */
+        display: block; /* Menghilangkan spasi ekstra di bawah gambar */
+
     }
 
     .product-info {
-        flex: 1;
+        flex: 1; /* Memungkinkan blok informasi ini mengisi sisa ruang yang tersedia */
+        min-width: 0; /* Penting untuk flex item agar bisa menyusut dengan baik */
+
     }
 
     .product-name {
-        font-size: 28px;
+        font-size: 38px; /* Ukuran font lebih besar dari sebelumnya untuk tampilan yang menonjol */
         font-weight: 600;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        color: #584C43; /* Warna default, bisa ditimpa oleh style inline PHP */
+        word-break: break-word;
     }
 
     .product-description {
         color: #333;
-        font-size: 16px;
+        font-size: 17px;
         line-height: 1.8;
         margin-bottom: 30px;
+        overflow-y: auto; /* Tambahkan scroll jika deskripsi terlalu panjang */
+        max-height: 300px; /* Batasi tinggi deskripsi untuk menghindari kartu yang terlalu panjang */
+        padding-right: 15px; /* Ruang untuk scrollbar */
+        scrollbar-width: thin; /* Gaya scrollbar untuk Firefox */
+        scrollbar-color: #584C43 #f1f1f1; /* Warna scrollbar untuk Firefox */
+    }
+
+    .product-description::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .product-description::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .product-description::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .product-description::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 
     .product-description p {
@@ -464,18 +513,197 @@
         margin-top: 40px;
     }
 
-    .product-actions-container {
+    .product-actions-container { 
         display: flex;
-        justify-content: flex-end;
-        position: absolute; /* Ubah ke absolute */
-        bottom: 30px; /* Atur jarak dari bawah */
-        right: 40px; /* Atur jarak dari kanan */
-        width: calc(100% - 80px); /* Sesuaikan dengan padding */
+        justify-content: flex-end; 
+        position: absolute; 
+        bottom: 40px; /* Jarak dari bawah kartu */
+        right: 40px; /* Jarak dari kanan kartu */
+        width: calc(100% - 80px); /* Lebar kontainer tombol disesuaikan dengan padding kartu */
+        gap: 15px; /* Jarak antar tombol */
+        flex-wrap: wrap; /* Izinkan tombol wrap jika ruang tidak cukup */
     }
+    
     .product-actions-page {
         display: flex;
         gap: 15px; /* Gap lebih kecil dari sebelumnya */
     }
+
+    .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.btn.comment-btn {
+    background-color: #584C43; /* Warna untuk tombol Comment */
+    color: white;
+    border: none;
+}
+
+.btn.comment-btn:hover {
+    background-color: #584C43;
+}
+
+.btn.back-btn {
+    background-color: #584C43; /* Warna untuk tombol Back */
+    color: white;
+    border: none;
+}
+
+.btn.back-btn:hover {
+    background-color: #584C43;
+}
+
+
+/* --- Media Queries untuk Responsivitas --- */
+
+/* Untuk tablet dan layar di bawah 992px */
+@media (max-width: 992px) {
+    .product-detail-page-wrapper {
+        padding: 25px 15px; /* Kurangi padding global */
+    }
+
+    .product-detail-card-page {
+        padding: 30px; /* Kurangi padding kartu */
+        width: 90%; /* Lebih lebar di tablet */
+        margin-top: 30px;
+        padding-bottom: 80px; /* Sesuaikan ruang untuk tombol */
+    }
+
+    .detail-title {
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+
+    .product-detail-content {
+        flex-direction: column; /* *PENTING*: Tata letak menjadi kolom (gambar di atas info) */
+        gap: 30px; /* Kurangi jarak antar elemen yang menumpuk */
+    }
+
+    .product-image-container {
+        width: 100%; /* Gambar mengisi lebar penuh */
+        height: 400px; /* Kurangi tinggi gambar agar proporsional */
+        min-width: unset; /* Hapus min-width agar gambar bisa menyusut */
+    }
+
+    .product-name {
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
+
+    .product-description {
+        font-size: 16px;
+        max-height: 250px; /* Batasi tinggi deskripsi di mobile agar tidak terlalu panjang */
+    }
+
+    .product-actions-container {
+        position: static; /* *PENTING*: Ubah ke static di mobile agar mengikuti alur dokumen */
+        margin-top: 30px; /* Beri jarak dari konten di atasnya */
+        right: auto; /* Hapus positioning absolut */
+        bottom: auto; /* Hapus positioning absolut */
+        width: 100%; /* Penuhi lebar kontainer */
+        justify-content: center; /* Pusatkan tombol */
+        flex-wrap: wrap; /* Izinkan tombol wrap jika terlalu banyak */
+    }
+
+    .product-actions-container .btn {
+        flex-grow: 1; /* Biarkan tombol tumbuh mengisi ruang */
+        text-align: center; /* Pusatkan teks di tombol */
+        width: auto; /* Agar tidak selalu 100% jika ada banyak tombol */
+        padding: 10px 15px; /* Kurangi padding tombol */
+        font-size: 15px;
+    }
+}
+
+/* Untuk smartphone dan layar di bawah 768px */
+@media (max-width: 768px) {
+    .product-detail-page-wrapper {
+        padding: 20px 10px; /* Padding lebih kecil lagi */
+    }
+
+    .product-detail-card-page {
+        padding: 25px; /* Padding lebih kecil lagi */
+        margin-top: 20px;
+        border-radius: 15px;
+        padding-bottom: 70px; /* Ruang untuk tombol */
+    }
+
+    .detail-title {
+        font-size: 28px;
+        margin-bottom: 25px;
+        text-align: center; /* Pusatkan judul di mobile */
+    }
+
+    .product-detail-content {
+        gap: 20px;
+    }
+
+    .product-image-container {
+        height: 300px; /* Tinggi gambar lebih kecil */
+    }
+
+    .product-name {
+        font-size: 26px;
+        margin-bottom: 15px;
+        text-align: center; /* Pusatkan nama produk di mobile */
+    }
+
+    .product-description {
+        font-size: 15px;
+        line-height: 1.7;
+        max-height: 180px; /* Batasi tinggi deskripsi lebih lanjut */
+    }
+
+    .product-description p {
+        margin-bottom: 10px;
+    }
+
+    .product-actions-container {
+        margin-top: 25px;
+        gap: 10px;
+        flex-direction: column; /* *PENTING*: Tombol aksi menjadi kolom di layar sangat kecil */
+    }
+
+    .product-actions-container .btn {
+        width: 100%; /* Tombol mengisi lebar penuh */
+    }
+}
+
+/* Untuk layar yang sangat kecil (misalnya, smartphone lama) */
+@media (max-width: 576px) {
+    .product-detail-card-page {
+        padding: 20px;
+        margin-top: 15px;
+        border-radius: 10px;
+        padding-bottom: 60px;
+    }
+
+    .detail-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .product-image-container {
+        height: 250px;
+    }
+
+    .product-name {
+        font-size: 22px;
+    }
+
+    .product-description {
+        font-size: 14px;
+        max-height: 150px;
+    }
+}
 
     .btn-primary {
         display: inline-block;
@@ -647,54 +875,46 @@
 }
 
 .save-btn {
-    background-color: #007bff; /* Contoh warna biru, Anda bisa sesuaikan */
+    background-color: #4E73DE; /* Contoh warna biru, Anda bisa sesuaikan */
 }
 .form-actions a:hover,
 .form-actions button:hover {
     opacity: 0.9; /* Sedikit transparansi saat dihover */
 }
 
-    .back-btn,
-    .cancel-btn {
-        background-color: #584C43;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-    }
+.back-btn,
+.cancel-btn {
+    background-color: #584C43;
+    color: white;
+}
 
+    .back-btn,
+    .cancel-btn,
     .add-comment-btn,
     .submit-btn {
-        background-color: #4E73DE;
-        color: #FFFFFF;
         border-radius: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 500;
         font-size: 16px;
-        line-height: 100%;
+        font-weight: 500;
+        line-height: 100%; 
         letter-spacing: 0%;
         text-decoration: none;
-        transition: all 0.3s;
-        padding: 0 15px;
-    }
-
-    .add-comment-btn {
-        width: 154px;
-    }
-
-    .submit-btn {
-        width: 120px;
-        border: none;
         cursor: pointer;
+        transition: all 0.3s ease;
+        border: none; 
+        display: inline-flex;
+        align-items: center; 
+        justify-content: center; 
+        padding: 12px 25px;
+        box-sizing: border-box; 
+        white-space: nowrap; 
     }
+
+.add-comment-btn,
+.submit-btn {
+    background-color: #4E73DE;
+    color: #FFFFFF;
+}
+
     @media (max-width: 768px) {
         .comment-item {
             flex-direction: column;
@@ -729,10 +949,24 @@
     }
 
     /* Comment Form Styles */
-    .comment-form {
-        margin: 0 42px;
-        max-width: 800px;
+    .edit-comment-container {
+    padding: 0 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .edit-comment-container {
+        padding: 0 50px;
     }
+}
+
+    .comment-form {
+        margin: 0 auto; /* Tengahkan form */
+        max-width: 800px;
+        width: 100%; /* Biar fleksibel */
+    }
+
 
     .form-group {
         margin-bottom: 20px;
@@ -760,146 +994,222 @@
     }
 
     /* Login Page Styles */
-    .login-page {
-        background: linear-gradient(to bottom, #E2CEB1, #FDFCE8);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+/* Styling untuk halaman Login & Register yang responsif */
 
+.login-page {
+    background: linear-gradient(to bottom, #E2CEB1, #FDFCE8);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; /* Tambahkan padding di sini untuk ruang di tepi layar */
+    box-sizing: border-box; /* Pastikan padding termasuk dalam perhitungan total dimensi */
+}
 
-    .login-container {
-        width: 100%;
-        padding: 20px;
-    }
+.login-container {
+    width: 100%; /* Kontainer akan mengisi lebar tersedia */
+    /* Padding sudah diatur di .login-page, jadi tidak perlu di sini */
+}
 
+.login-card {
+    background-color: #FFFFFF;
+    width: 90%; /* Gunakan persentase untuk lebar */
+    max-width: 450px; /* Batasi lebar maksimal untuk desktop */
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin: 30px auto; /* Margin vertikal otomatis untuk centering */
+    padding: 40px; /* Padding besar untuk desktop */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Pastikan padding termasuk dalam lebar */
+}
+
+.welcome-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #000000;
+    margin-bottom: 30px;
+    text-align: center;
+    word-break: break-word; /* Mencegah teks terlalu panjang */
+}
+
+.error-message {
+    color: #dc3545;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8d7da;
+    border-radius: 4px;
+    text-align: center; /* Pastikan pesan error terpusat */
+    word-break: break-word;
+}
+
+.success-message {
+    color: #28a745;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #d4edda;
+    border-radius: 4px;
+    text-align: center; /* Pastikan pesan sukses terpusat */
+    word-break: break-word;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Auth Tabs */
+.auth-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    justify-content: center; /* Pusatkan tab-btn */
+}
+
+.tab-btn {
+    flex: 1; /* Biarkan tombol tab mengisi ruang yang tersedia */
+    max-width: 150px; /* Batasi lebar setiap tab */
+    padding: 10px 0; /* Padding vertikal saja, lebar diatur oleh flex */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    position: relative;
+    text-align: center; /* Pusatkan teks di dalam tab */
+    white-space: nowrap; /* Mencegah teks tab pecah baris */
+}
+
+.tab-btn.active {
+    color: #333;
+    font-weight: bold;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #333;
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+.register-btn, .login-btn {
+    padding: 12px;
+    background-color: #4E73DE;
+    color: white;
+    border: none;
+    border-radius: 25px; /* Tetap bulat */
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px; /* Beri jarak dari elemen di atasnya */
+    width: 100%; /* Buat tombol mengisi lebar penuh */
+    box-sizing: border-box; /* Pastikan padding termasuk dalam lebar */
+    text-decoration: none; /* Untuk kasus jika ini adalah link */
+    display: block; /* Pastikan display block untuk width 100% */
+    text-align: center; /* Pusatkan teks tombol */
+}
+
+.register-btn:hover, .login-btn:hover {
+    background-color: #3a5bc7;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #584C43;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    transition: all 0.3s;
+    box-sizing: border-box; /* Sangat penting untuk input width 100% */
+}
+
+.form-group input:focus {
+    border-color: #584C43;
+    outline: none;
+}
+
+/* --- Media Queries --- */
+@media (max-width: 576px) {
     .login-card {
-        background-color: #FFFFFF;
-        width: 450px; /* Lebih sempit dari sebelumnya */
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        margin: 50px auto;
-        padding: 40px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 25px; /* Kurangi padding untuk layar yang lebih kecil */
+        margin: 20px auto; /* Kurangi margin vertikal */
+        border-radius: 8px; /* Sedikit kurva yang lebih kecil */
     }
 
     .welcome-text {
-        font-family: 'Inter', sans-serif;
-        font-size: 24px;
-        font-weight: 400;
-        line-height: 100%;
-        letter-spacing: 0%;
-        color: #000000;
-        margin-bottom: 30px;
-        text-align: center;
-    }
-
-    .error-message {
-        color: #A31414;
+        font-size: 20px; /* Ukuran font judul lebih kecil */
         margin-bottom: 20px;
-        text-align: center;
     }
 
-    .login-form {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    /* Auth Tabs */
-    .auth-tabs {
-        display: flex;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .tab-btn {
-        padding: 10px 20px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        color: #666;
-        position: relative;
-    }
-
-    .tab-btn.active {
-        color: #333;
-        font-weight: bold;
-    }
-
-    .tab-btn.active::after {
-        content: '';
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background-color: #333;
-    }
-
-    .auth-form {
-        display: none;
-    }
-
-    .auth-form.active {
-        display: block;
-    }
-
-    .error-message {
-        color: #dc3545;
-        margin-bottom: 15px;
-        padding: 10px;
-        background-color: #f8d7da;
-        border-radius: 4px;
-    }
-
-    .success-message {
-        color: #28a745;
-        margin-bottom: 15px;
-        padding: 10px;
-        background-color: #d4edda;
-        border-radius: 4px;
-    }
-    .register-btn{
-        padding: 12px;
-        background-color: #4E73DE;
-        color: white;
-        border: none;
-        border-radius: 25px;
-        font-size: 16px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s;
-        margin-top: 10px;
-    }
-
-
-.login-btn {
-    padding: 8px 15px;
-    background: #4E73DE;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: all 0.3s;
-}
     .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
-        color: #584C43;
-        font-size: 14px;
+        font-size: 13px; /* Ukuran font label lebih kecil */
     }
 
     .form-group input {
-        width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-family: 'Poppins', sans-serif;
-        font-size: 14px;
-        transition: all 0.3s;
+        padding: 10px 12px; /* Kurangi padding input */
+        font-size: 13px; /* Ukuran font input lebih kecil */
     }
+
+    .register-btn, .login-btn {
+        padding: 10px; /* Kurangi padding tombol */
+        font-size: 15px; /* Ukuran font tombol lebih kecil */
+        margin-top: 5px; /* Kurangi jarak antar tombol */
+    }
+
+    .auth-tabs {
+        margin-bottom: 15px;
+    }
+
+    .tab-btn {
+        font-size: 15px; /* Ukuran font tab lebih kecil */
+        padding: 8px 0;
+    }
+
+    .error-message, .success-message {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-card {
+        padding: 20px; /* Padding minimal untuk layar sangat kecil */
+        border-radius: 5px;
+    }
+
+    .welcome-text {
+        font-size: 18px; /* Ukuran font judul terkecil */
+        margin-bottom: 15px;
+    }
+}
 
     .form-group input:focus {
         border-color: #584C43;
