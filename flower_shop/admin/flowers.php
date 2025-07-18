@@ -10,8 +10,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
 
 // Daftar warna yang tersedia
 $availableColors = [
-    'blue', 'purple', 'pink', 'white', 
-    'red', 'yellow', 'green', 'black'
+    'biru', 'ungu', 'pink', 'putih', 
+    'merah', 'kuning', 'hijau', 'hitam'
 ];
 
 // Inisialisasi variabel error
@@ -242,14 +242,14 @@ try {
                         <label for="color">Warna Bunga</label>
                         <select id="color" name="color" required>
                             <option value="">Pilih Warna</option>
-                            <option value="blue">blue</option>
-                            <option value="purple">purple</option>
-                            <option value="pink">pink</option>
-                            <option value="white">white</option>
-                            <option value="red">red</option>
-                            <option value="yellow">yellow</option>
-                            <option value="green">green</option>
-                            <option value="back">black</option>
+                            <option value="biru">Biru</option>
+                            <option value="ungu">Ungu</option>
+                            <option value="pink">Pink</option>
+                            <option value="putih">Putih</option>
+                            <option value="merah">Merah</option>
+                            <option value="kuning">Kuning</option>
+                            <option value="hijau">Hijau</option>
+                            <option value="hitam">Hitam</option>
                         </select>
                     </div>
                 </div>

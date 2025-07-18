@@ -1,5 +1,3 @@
-
-
 <?php 
 include '../includes/header.php';
 require '../config/database.php';
@@ -88,5 +86,5 @@ function formatProductDescription($description) {
             </div>
         </div>
         </div>
-    </div>
+    </div>
 </main>

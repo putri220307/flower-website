@@ -72,7 +72,7 @@
 
     <footer class="modern-footer">
       <div class="footer-bottom">
-        <p class="copyright">© 2025 Your Company. All rights reserved.</p>
+        <p class="copyright">© 2025 FLORAZZIU. All rights reserved.</p>
         <div class="social-media">
           <a href="https://www.facebook.com/share/1Yg6LahS4i/" class="social-icon"><i class="fab fa-facebook-f"></i></a>
           <a href="https://www.tiktok.com/@zakkirahimun?is_from_webapp=1&sender_device=pc" class="social-icon"><i class="fab fa-tiktok"></i></a>

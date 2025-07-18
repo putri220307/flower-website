@@ -14,8 +14,8 @@
 
     // Available colors
     $availableColors = [
-        'blue', 'purple', 'pink', 'white', 
-        'red', 'yellow', 'green', 'black'
+        'biru', 'ungu', 'pink', 'putih', 
+        'merah', 'kuning', 'hijau', 'hitam'
     ];
 
     // Get flower ID
@@ -170,14 +170,14 @@
                         <label for="color">Warna Bunga</label>
                         <select id="color" name="color" required>
                             <option value="">Pilih Warna</option>
-                            <option value="blue" <?= $flower['color'] === 'blue' ? 'selected' : '' ?>>blue</option>
-                            <option value="purple" <?= $flower['color'] === 'purple' ? 'selected' : '' ?>>purple</option>
-                            <option value="pink" <?= $flower['color'] === 'pink' ? 'selected' : '' ?>>pink</option>
-                            <option value="white" <?= $flower['color'] === 'white' ? 'selected' : '' ?>>white</option>
-                            <option value="red" <?= $flower['color'] === 'red' ? 'selected' : '' ?>>red</option>
-                            <option value="yellow" <?= $flower['color'] === 'yellow' ? 'selected' : '' ?>>yellow</option>
-                            <option value="green" <?= $flower['color'] === 'green' ? 'selected' : '' ?>>green</option>
-                            <option value="black" <?= $flower['color'] === 'black' ? 'selected' : '' ?>>black</option>
+                            <option value="biru" <?= $flower['color'] === 'biru' ? 'selected' : '' ?>>Biru</option>
+                            <option value="ungu" <?= $flower['color'] === 'ungu' ? 'selected' : '' ?>>Ungu</option>
+                            <option value="pink" <?= $flower['color'] === 'pink' ? 'selected' : '' ?>>Pink</option>
+                            <option value="putih" <?= $flower['color'] === 'putih' ? 'selected' : '' ?>>Putih</option>
+                            <option value="merah" <?= $flower['color'] === 'merah' ? 'selected' : '' ?>>Merah</option>
+                            <option value="kuning" <?= $flower['color'] === 'kuning' ? 'selected' : '' ?>>Kuning</option>
+                            <option value="hijau" <?= $flower['color'] === 'hijau' ? 'selected' : '' ?>>Hijau</option>
+                            <option value="hitam" <?= $flower['color'] === 'hitam' ? 'selected' : '' ?>>Hitam</option>
                         </select>
                     </div>
                     

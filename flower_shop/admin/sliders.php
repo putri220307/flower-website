@@ -95,7 +95,8 @@ if (empty($_SESSION['csrf_token'])) {
             background: #f9f9f9;
         }
         
-        .btn-edit,.btn-delete {
+        .btn-edit,
+        .btn-delete {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -106,19 +107,18 @@ if (empty($_SESSION['csrf_token'])) {
         text-decoration: none;
         }
 
-
-        .btn-edit {            
+        .btn-edit {
             background: #4e73df;
             color: white;
         }
-        
-        .btn-delete {            
+
+        .btn-delete {
             background: #e74a3b;
             color: white;
             border: none;
             cursor: pointer;
         }
-        
+       
         .upload-form {
             background: white;
             padding: 20px;
@@ -136,7 +136,7 @@ if (empty($_SESSION['csrf_token'])) {
             margin-bottom: 5px;
             font-weight: 500;
         }
-        upload-slider-container {
+        .upload-slider-container {
         max-width: 800px;
         margin: 20px auto;
         background: #ffffff;
@@ -284,7 +284,7 @@ if (empty($_SESSION['csrf_token'])) {
 </head>
 <body>
     <!-- Sidebar -->
-    <    <div class="sidebar">
+       <div class="sidebar">
     <div class="sidebar-header">
         <a href="dashboard.php" class="dashboard-link">
             <h2><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></h2>
@@ -383,11 +383,11 @@ if (empty($_SESSION['csrf_token'])) {
                             <img src="../<?= htmlspecialchars($slider['image_path']) ?>" alt="Slider Image" class="slider-image">
                             <div class="slider-actions">
                                 <span><?= date('d/m/Y H:i', strtotime($slider['created_at'])) ?></span>
-                                <div>
+                                <div style="display: flex; gap: 10px; align-items: center;">
                                     <a href="edit_slider.php?id=<?= $slider['id'] ?>" class="btn-edit">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
-                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus slider ini?')">
+                                    <form method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus slider ini?')">
                                         <input type="hidden" name="slider_id" value="<?= $slider['id'] ?>">
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                         <button type="submit" name="delete_slider" class="btn-delete">
@@ -395,6 +395,7 @@ if (empty($_SESSION['csrf_token'])) {
                                         </button>
                                     </form>
                                 </div>
+
                             </div>
                         </div>
                     <?php endforeach; ?>

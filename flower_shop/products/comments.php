@@ -58,15 +58,6 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
         margin: auto;
     }
 
-    .comment-container {
-        padding: 0 50px; /* Beri jarak kanan kiri */
-    }
-
-    .comment-card {
-        margin: 0 50px; /* Jarak luar kanan-kiri */
-    }
-
-
     .dots-btn {
         background: none;
         border: none;
@@ -130,22 +121,10 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .delete-btn {
         color: #ff4444 !important;
     }
-
-    .comment-container {
-    padding: 0 10px;
-}
-
-@media (min-width: 768px) {
-    .comment-container {
-        padding: 0 30px;
-    }
-}
-
 </style>
 
 <main>
-    <div class="comment-container">
-        <div class="comment-card">
+    <div class="container">
         <h1 class="comments-title">Comment</h1> <div class="comments-filter">
             <div class="filter-dropdown">
                 <button class="filter-btn">Sort by</button>
@@ -190,7 +169,6 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="comments-actions">
             <a href="product-detail.php?id=<?= $product_id ?>" class="back-btn">Back</a>
             <a href="add-comment.php?id=<?= $product_id ?>" class="add-comment-btn">Add Comment</a>
-        </div>
         </div>
     </div>
 </main>
